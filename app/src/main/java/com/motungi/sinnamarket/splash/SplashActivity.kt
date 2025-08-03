@@ -1,0 +1,4 @@
+package splash
+
+class SplashActivity {
+}
