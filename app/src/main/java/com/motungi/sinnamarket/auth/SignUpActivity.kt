@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -30,13 +31,39 @@ class SignUpActivity : AppCompatActivity() {
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val etNickname = findViewById<EditText>(R.id.etNickname)
-        val spinnerRegion = findViewById<Spinner>(R.id.spinnerRegion)
+        val spinnerDistrict = findViewById<Spinner>(R.id.spinnerDistrict)
+        val spinnerDong = findViewById<Spinner>(R.id.spinnerDong)
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
 
-        // 지역 스피너 설정
-        val regions = listOf("지역을 선택하세요", "중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군", "군위군")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, regions)
-        spinnerRegion.adapter = adapter
+        // 1. 구 리스트
+        val districtList = listOf("선택하세요", "중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군", "군위군")
+        val districtAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, districtList)
+        spinnerDistrict.adapter = districtAdapter
+
+// 2. 구-동 매핑
+        val dongMap = mapOf(
+            "중구" to listOf("선택하세요", "동인동", "삼덕동", "성내동", "대신동", "남산동", "대봉동"),
+            "동구" to listOf("선택하세요", "신암동", "신천동", "효목동", "도평동", "불로봉무동", "지저동", "동촌동", "방촌동", "해안동", "안심동", "혁신동", "공산동"),
+            "서구" to listOf("선택하세요", "내당동", "비산동", "평리동", "상중이동", "원대동"),
+            "남구" to listOf("선택하세요", "이천동", "봉덕동", "대명동"),
+            "북구" to listOf("선택하세요", "고성동", "칠성동", "침산동", "노원동", "산격동", "복현동", "대현동", "검단동", "무태조야동", "관문동", "태전동", "구암동", "관음동", "읍내동", "동촌동", "국우동"),
+            "수성구" to listOf("선택하세요", "범어동", "만촌동", "수성동", "황금동", "중동", "상동", "파동", "두산동", "지산동", "범물동", "고산동"),
+            "달서구" to listOf("선택하세요", "성당동", "두류동", "본리동", "감삼동", "죽전동", "장기동", "용산동", "이곡동", "신당동", "월성동", "진천동", "유천동", "상인동", "도원동", "송현동", "본동"),
+            "달성군" to listOf("선택하세요", "화원읍", "논공읍", "다사읍", "유가읍", "옥포읍", "현풍읍", "가창면", "하빈면", "구지면"),
+            "군위군" to listOf("선택하세요", "군위읍", "소보면", "효령면", "부계면", "우보면", "의흥면", "산성면", "삼국유사면")
+        )
+
+// 3. 구 선택 시 해당 동 리스트 적용
+        spinnerDistrict.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedDistrict = districtList[position]
+                val dongList = dongMap[selectedDistrict] ?: listOf("선택하세요")
+                val dongAdapter = ArrayAdapter(this@SignUpActivity, android.R.layout.simple_spinner_dropdown_item, dongList)
+                spinnerDong.adapter = dongAdapter
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
         // 회원가입
         btnSignUp.setOnClickListener {
@@ -45,7 +72,12 @@ class SignUpActivity : AppCompatActivity() {
             val email = etEmail.text.toString()
             val password = etPassword.text.toString()
             val nickname = etNickname.text.toString()
-            val region = spinnerRegion.selectedItem.toString()
+            val district = spinnerDistrict.selectedItem.toString()
+            val dong = spinnerDong.selectedItem.toString()
+            val region = mapOf(
+                "district" to district,
+                "dong" to dong
+            )
 
             if (name.isEmpty() || phonenumber.isEmpty() || email.isEmpty() || password.isEmpty() || nickname.isEmpty()) {
                 Toast.makeText(this, "모든 정보를 입력하세요.", Toast.LENGTH_SHORT).show()
@@ -70,42 +102,6 @@ class SignUpActivity : AppCompatActivity() {
                     createAccountAndSaveUser(name, phonenumber, email, password, nickname, region)
                 }
         }
-
-        fun createAccountAndSaveUser(
-            name: String,
-            phonenumber: String,
-            email: String,
-            password: String,
-            nickname: String,
-            region: String
-        ) {
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    val uid = auth.currentUser!!.uid
-                    val user = hashMapOf(
-                        "name" to name,
-                        "phonenumber" to phonenumber,
-                        "email" to email,
-                        "nickname" to nickname,
-                        "region" to region,
-                        "location" to hashMapOf("lat" to 0.0, "lng" to 0.0),
-                        "rating" to 0.0,
-                        "is_blocked" to false
-                    )
-                    db.collection("users").document(uid).set(user)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, MainActivity::class.java))
-                            finish()
-                        }
-                        .addOnFailureListener {//DB 저장 실패
-                            Toast.makeText(this, "오류: ${it.message}", Toast.LENGTH_SHORT).show()
-                        }
-                }
-                .addOnFailureListener {//회원가입 실패
-                    Toast.makeText(this, "오류: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
-        }
     }
 
     private fun createAccountAndSaveUser(
@@ -114,7 +110,7 @@ class SignUpActivity : AppCompatActivity() {
         email: String,
         password: String,
         nickname: String,
-        region: String
+        region: Map<String, String>
     ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {

@@ -40,10 +40,17 @@
             android:hint="닉네임"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
         <Spinner
-            android:id="@+id/spinnerRegion"
+            android:id="@+id/spinnerDistrict"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/spinnerDong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSignUp"
             android:text="회원가입"
