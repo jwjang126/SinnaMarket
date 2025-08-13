@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     android:gravity="center"
@@ -7,26 +8,30 @@
 
     <EditText
         android:id="@+id/etEmail"
-        android:hint="이메일"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="이메일" />
 
     <EditText
         android:id="@+id/etPassword"
         android:hint="비밀번호"
         android:inputType="textPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:text="로그인"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:backgroundTint="#97CD2D"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoSignUp"
         android:text="회원가입"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textColor="#97CD2D"
+        app:backgroundTint="#00000000"/>
 </LinearLayout>

@@ -1,4 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -6,15 +7,49 @@
         android:orientation="vertical"
         android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp">
 
-        <EditText android:id="@+id/etName" android:hint="이름" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textPersonName" android:imeOptions="actionDone" android:singleLine="true"/>
-        <EditText android:id="@+id/etPhonenumber" android:hint="전화번호" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <EditText android:id="@+id/etEmail" android:hint="이메일" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <EditText android:id="@+id/etPassword" android:hint="비밀번호" android:inputType="textPassword" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <EditText android:id="@+id/etNickname" android:hint="닉네임" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <Spinner android:id="@+id/spinnerRegion" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <Button android:id="@+id/btnSignUp" android:text="회원가입" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etName"
+            android:hint="이름"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
+
+        <EditText
+            android:id="@+id/etPhonenumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="전화번호" />
+        <EditText
+            android:id="@+id/etEmail"
+            android:hint="이메일"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etPassword"
+            android:hint="비밀번호 (6자 이상)"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etNickname"
+            android:hint="닉네임"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Spinner
+            android:id="@+id/spinnerRegion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignUp"
+            android:text="회원가입"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:backgroundTint="#97CD2D" />
 
     </LinearLayout>
 </ScrollView>

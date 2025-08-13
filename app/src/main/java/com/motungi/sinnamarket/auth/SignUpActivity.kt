@@ -34,7 +34,7 @@ class SignUpActivity : AppCompatActivity() {
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
 
         // 지역 스피너 설정
-        val regions = listOf("서울특별시", "부산광역시", "대구광역시", "광주광역시")
+        val regions = listOf("지역을 선택하세요", "중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군", "군위군")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, regions)
         spinnerRegion.adapter = adapter
 
@@ -94,16 +94,16 @@ class SignUpActivity : AppCompatActivity() {
                     )
                     db.collection("users").document(uid).set(user)
                         .addOnSuccessListener {
-                            Toast.makeText(this, "회원가입 성공!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "DB 저장 실패: ${it.message}", Toast.LENGTH_SHORT).show()
+                        .addOnFailureListener {//DB 저장 실패
+                            Toast.makeText(this, "오류: ${it.message}", Toast.LENGTH_SHORT).show()
                         }
                 }
-                .addOnFailureListener {
-                    Toast.makeText(this, "회원가입 실패: ${it.message}", Toast.LENGTH_SHORT).show()
+                .addOnFailureListener {//회원가입 실패
+                    Toast.makeText(this, "오류: ${it.message}", Toast.LENGTH_SHORT).show()
                 }
         }
     }
@@ -133,20 +133,20 @@ class SignUpActivity : AppCompatActivity() {
                 // Firestore에 저장
                 db.collection("users").document(uid).set(user)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "회원가입 성공!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     }
                     .addOnFailureListener { e ->
-                        Log.e("SignUp", "Firestore 저장 실패: ${e.message}")
-                        Toast.makeText(this, "DB 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Log.e("SignUp", "오류: ${e.message}")//Firestore 저장 실패
+                        Toast.makeText(this, "오류: ${e.message}", Toast.LENGTH_SHORT).show()//DB 저장 실패
                         // Auth 롤백
                         auth.currentUser?.delete()
                     }
             }
             .addOnFailureListener { e ->
-                Log.e("SignUp", "회원가입 실패: ${e.message}")
-                Toast.makeText(this, "회원가입 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("SignUp", "오류: ${e.message}")//회원가입 실패
+                Toast.makeText(this, "오류: ${e.message}", Toast.LENGTH_SHORT).show()//회원가입 실패
             }
     }
 }
