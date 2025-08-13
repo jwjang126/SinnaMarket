@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 상품명 -->
+        <EditText
+            android:id="@+id/itemNameInput"
+            android:hint="상품명"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- 가격 -->
+        <EditText
+            android:id="@+id/itemPriceInput"
+            android:hint="가격"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- 상품 설명 -->
+        <EditText
+            android:id="@+id/itemDescInput"
+            android:hint="상품 설명"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="3" />
+
+        <!-- 품목 선택 -->
+        <TextView
+            android:text="카테고리 선택"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- 위치 선택 -->
+        <TextView
+            android:text="희망 거래 위치"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/districtSpinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/dongSpinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:text="거래 위치 조율 가능"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- 거래 희망 시간 -->
+        <TextView
+            android:text="거래 희망 날짜"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/yearSpinner"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/monthSpinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/daySpinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+
+        <!-- 시간 투표 후보 입력 -->
+
+        <TextView
+            android:text="거래 희망 시간 후보 (최대 5개)"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:id="@+id/timeoption1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="8dp">
+            <Spinner
+                android:id="@+id/option1_ap"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option1_hour"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option1_min"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/timeoption2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="8dp">
+            <Spinner
+                android:id="@+id/option2_ap"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option2_hour"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option2_min"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/timeoption3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="8dp">
+            <Spinner
+                android:id="@+id/option3_ap"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option3_hour"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option3_min"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/timeoption4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="8dp">
+            <Spinner
+                android:id="@+id/option4_ap"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option4_hour"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option4_min"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/timeoption5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="8dp">
+            <Spinner
+                android:id="@+id/option5_ap"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option5_hour"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/option5_min"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+
+        <!-- 등록 버튼 -->
+        <Button
+            android:id="@+id/submitBtn"
+            android:text="상품 등록"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#97CD2D"
+            android:layout_marginTop="16dp" />
+
+        <!-- 결과 출력 -->
+        <TextView
+            android:id="@+id/resultText"
+            android:text=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp" />
+    </LinearLayout>
+</ScrollView>
