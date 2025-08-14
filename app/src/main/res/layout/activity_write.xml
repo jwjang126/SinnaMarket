@@ -24,15 +24,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- 상품 설명 -->
         <EditText
             android:id="@+id/itemDescInput"
-            android:hint="상품 설명"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="상품 설명"
             android:minLines="3" />
 
-        <!-- 품목 선택 -->
+
+
+
+        <Button
+            android:id="@+id/selectPhotoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#97CD2D"
+            android:text="사진 선택" />
+
+        <ImageView
+            android:id="@+id/photoPreview"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop" />
+
         <TextView
             android:text="카테고리 선택"
             android:textStyle="bold"

@@ -1,5 +1,9 @@
 package com.motungi.sinnamarket.auth
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import com.motungi.sinnamarket.R
 import android.os.Bundle
 import android.view.View
@@ -8,9 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-
-
-
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,7 +35,12 @@ class MainActivity : AppCompatActivity() {
     private val ampm = arrayOf("오전", "오후")
     private val hours = (1..12).map { it.toString() }.toTypedArray()
     private val mins = (0..59).map { it.toString() }.toTypedArray()
+    private val PICK_IMAGE_REQUEST = 100
+    private var imageUri: Uri? = null
+    private lateinit var photoPreview: ImageView
+    private lateinit var selectPhotoBtn: Button
 
+    @SuppressLint("MissingSuperCall")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_write)
@@ -59,5 +67,46 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+        //사진 첨부
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_write)
+
+        photoPreview = findViewById(R.id.photoPreview)
+        selectPhotoBtn = findViewById(R.id.selectPhotoBtn)
+
+        selectPhotoBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            imageUri = data?.data
+            photoPreview.setImageURI(imageUri)
+            uploadImageToFirebase()
+        }
+    }
+
+    private fun uploadImageToFirebase() {
+        if (imageUri == null) return
+
+        val storageRef = FirebaseStorage.getInstance().reference
+        val fileName = "images/${UUID.randomUUID()}.jpg"
+        val imageRef = storageRef.child(fileName)
+
+        imageRef.putFile(imageUri!!)
+            .addOnSuccessListener {
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    val imageUrl = uri.toString()
+                    // 여기서 Firestore/Realtime DB에 imageUrl 저장
+                    println("Firebase Image URL: $imageUrl")
+                }
+            }
+            .addOnFailureListener {
+                println("Upload failed: ${it.message}")
+            }
     }
 }
