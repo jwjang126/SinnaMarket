@@ -5,10 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <!-- 상단 헤더 영역 -->
     <LinearLayout
+        android:background="#97CD2D"
         android:id="@+id/header_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -38,13 +40,13 @@
         <ImageView
             android:id="@+id/search_icon"
             android:layout_width="24dp"
-            android:layout_height="20dp"
+            android:layout_height="24dp"
+            android:src="@drawable/search_icon"
             android:layout_marginEnd="16dp"
-            android:contentDescription="검색"
-            android:src="@drawable/search_icon" />
+            android:contentDescription="검색"/>
 
         <ImageView
-            android:id="@+id/cart_icon"
+            android:id="@+id/logout_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/logout_icon"
@@ -52,19 +54,21 @@
     </LinearLayout>
 
     <!-- 카테고리 탭 레이아웃 -->
+
+    <!-- 뷰페이저: 탭에 따라 내용이 바뀌는 영역 -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:tabMode="scrollable"
-        app:tabIndicatorColor="?attr/colorPrimary"
-        app:tabSelectedTextColor="?attr/colorPrimary"
-        app:tabTextColor="@android:color/darker_gray"
-        app:layout_constraintTop_toBottomOf="@id/header_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/header_layout"
+        app:tabIndicatorColor="?attr/colorPrimary"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="?attr/colorPrimary"
+        app:tabTextColor="@android:color/darker_gray" />
 
-    <!-- 뷰페이저: 탭에 따라 내용이 바뀌는 영역 -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="0dp"
@@ -81,6 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/write_icon"
+        app:backgroundTint="#97CD2D"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation_bar"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="글쓰기" />
