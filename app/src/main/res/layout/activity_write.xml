@@ -83,9 +83,21 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
 
-
         </LinearLayout>
 
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/map_fragment"
+            android:layout_width="380dp"
+            android:layout_height="380dp"
+            android:name="com.naver.maps.map.MapFragment" />
+
+        <Button
+            android:id="@+id/openMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#97CD2D"
+            android:text="지도에서 고르기" />
 
         <CheckBox
             android:id="@+id/checkbox"

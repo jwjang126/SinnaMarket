@@ -9,7 +9,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.motungi.sinnamarket.R
 import java.util.UUID
 
-class MainActivity : AppCompatActivity() {
+class WriteActivity : AppCompatActivity() {
 
     private val categories = arrayOf("신선식품", "가공식품", "식품 이외")
 
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
                 val selectedDistrict = parent?.getItemAtPosition(position).toString()
                 val dongList = districtMap[selectedDistrict] ?: listOf("선택하세요")
-                dongSpinner.adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, dongList)
+                dongSpinner.adapter = ArrayAdapter(this@WriteActivity, android.R.layout.simple_spinner_dropdown_item, dongList)
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
