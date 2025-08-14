@@ -15,6 +15,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.motungi.sinnamarket.R
 import com.motungi.sinnamarket.auth.WriteActivity
 import com.motungi.sinnamarket.databinding.ActivityMainBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.motungi.sinnamarket.auth.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         val categories = listOf("가공식품(냉동)", "가공식품(비냉동)", "신선식품", "대량 물건")
         val viewPager = binding.viewPager
         val tabLayout = binding.tabLayout
+
 
         viewPager.adapter = ViewPagerAdapter(this, categories)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
@@ -68,6 +71,20 @@ class MainActivity : AppCompatActivity() {
         binding.fabWrite.setOnClickListener {
             val intent = Intent(this, WriteActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.logoutIcon.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+
+            val intent = Intent(this, LoginActivity::class.java).apply {
+                addFlags(
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+                )
+            }
+            startActivity(intent)
+            finish()
         }
     }
 
