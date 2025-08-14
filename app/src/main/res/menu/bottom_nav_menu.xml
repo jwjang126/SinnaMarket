@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home_icon"
+        android:title="홈"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/nav_chat"
+        android:icon="@drawable/chat_icon"
+        android:title="채팅"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/nav_my_info"
+        android:icon="@drawable/user_icon"
+        android:title="내 정보"
+        app:showAsAction="ifRoom" />
+</menu>
