@@ -23,10 +23,15 @@
         android:theme="@style/Theme.SinnaMarket"
         tools:targetApi="31">
 
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="bx4ogr7pia" />
+
         <activity
             android:name=".auth.WriteActivity"
             android:exported="false" />
         <activity
+
             android:name=".splash.SplashActivity"
             android:exported="true">
             <intent-filter>

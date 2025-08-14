@@ -1,5 +1,6 @@
 package com.motungi.sinnamarket.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.motungi.sinnamarket.R
+import com.motungi.sinnamarket.auth.WriteActivity
 import com.motungi.sinnamarket.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -64,7 +66,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabWrite.setOnClickListener {
-            Toast.makeText(this, "글쓰기 화면으로 이동", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, WriteActivity::class.java)
+            startActivity(intent)
         }
     }
 
