@@ -25,8 +25,8 @@
 
         <!-- Naver Map 클라이언트 ID 유지 -->
         <meta-data
-            android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="bx4ogr7pia" />
+            android:name="com.naver.maps.map.NCP_KEY_ID"
+            android:value="ce3shefx6j" />
 
         <!-- DetailActivity 유지 -->
         <activity
