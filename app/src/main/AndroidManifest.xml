@@ -22,24 +22,34 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SinnaMarket"
         tools:targetApi="31">
+
+        <!-- Naver Map 클라이언트 ID 유지 -->
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="bx4ogr7pia" />
+
+        <!-- DetailActivity 유지 -->
         <activity
             android:name=".main.DetailActivity"
             android:exported="false" />
+
         <activity
             android:name=".auth.WriteActivity"
             android:exported="false" />
+
         <activity
             android:name=".splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".auth.LoginActivity" />
         <activity android:name=".auth.SignUpActivity" />
         <activity android:name=".main.MainActivity" />
+
     </application>
 
 </manifest>
