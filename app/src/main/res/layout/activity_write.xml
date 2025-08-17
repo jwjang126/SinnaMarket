@@ -98,12 +98,6 @@
 
         </LinearLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/map_fragment"
-            android:layout_width="380dp"
-            android:layout_height="380dp"
-            android:name="com.naver.maps.map.MapFragment" />
-
         <Button
             android:id="@+id/openMap"
             android:layout_width="match_parent"

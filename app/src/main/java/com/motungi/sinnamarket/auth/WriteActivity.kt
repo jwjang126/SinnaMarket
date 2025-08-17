@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.motungi.sinnamarket.R
 import com.motungi.sinnamarket.main.MainActivity
+import com.motungi.sinnamarket.main.MapSelectActivity
 import java.util.UUID
 
 class WriteActivity : AppCompatActivity() {
@@ -158,6 +159,11 @@ class WriteActivity : AppCompatActivity() {
                 }
         }
 
+        val openMapBtn = findViewById<Button>(R.id.openMap)
+        openMapBtn.setOnClickListener {
+            val intent = Intent(this, MapSelectActivity::class.java)
+            startActivityForResult(intent, 1001) // 1001은 요청 코드
+        }
 
     }
 
