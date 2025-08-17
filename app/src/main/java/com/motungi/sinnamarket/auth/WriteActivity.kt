@@ -133,6 +133,7 @@ class WriteActivity : AppCompatActivity() {
             }
 
             val currentUser = FirebaseAuth.getInstance().currentUser
+            val authorid = currentUser?.uid ?: "unknown"
             if (currentUser == null) {
                 Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -156,7 +157,7 @@ class WriteActivity : AppCompatActivity() {
                         }
                     }
 
-                    saveItemToFirestore(0.0, 0.0, checkBoxOption.isChecked, voteOptions)
+                    saveItemToFirestore(0.0, 0.0, checkBoxOption.isChecked, voteOptions,authorid)
                 }
         }
 
@@ -168,7 +169,7 @@ class WriteActivity : AppCompatActivity() {
 
     }
 
-    private fun saveItemToFirestore(lat: Double, lng: Double, isChecked: Boolean, voteOptions: List<Map<String, Any>>) {
+    private fun saveItemToFirestore(lat: Double, lng: Double, isChecked: Boolean, voteOptions: List<Map<String, Any>>, authorid:String) {
         val itemName = findViewById<EditText>(R.id.itemNameInput).text.toString()
         val itemDesc = findViewById<EditText>(R.id.itemDescInput).text.toString()
         val itemPrice = findViewById<EditText>(R.id.itemPriceInput).text.toString().toIntOrNull() ?: 0
@@ -187,6 +188,7 @@ class WriteActivity : AppCompatActivity() {
             "price" to itemPrice,
             "category" to category,
             "numPeople" to numPeople,
+            "authorid" to authorid,
             "re_location" to isChecked,
             "region" to hashMapOf("district" to district, "dong" to dong),
             "location" to hashMapOf("lat" to lat, "lng" to lng),

@@ -43,7 +43,7 @@ class DetailActivity : AppCompatActivity() {
             .addOnSuccessListener { doc ->
                 if (!doc.exists()) return@addOnSuccessListener
 
-                val itemName = doc.getString("name") ?: ""
+                val itemName = doc.getString("title") ?: ""
                 val itemDesc = doc.getString("description") ?: ""
                 val itemPrice = doc.getLong("price") ?: 0
                 val images = doc.get("imageUrls") as? List<String> ?: listOf()
@@ -54,7 +54,7 @@ class DetailActivity : AppCompatActivity() {
                 imageUrls.addAll(uris)
                 photoAdapter.notifyDataSetChanged()
 
-                val authorId = doc.getString("authorId") ?: ""
+                val authorId = doc.getString("authorid") ?: ""
 
                 findViewById<TextView>(R.id.detailItemName).text = itemName
                 findViewById<TextView>(R.id.detailItemDesc).text = itemDesc
