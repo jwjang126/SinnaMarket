@@ -31,6 +31,18 @@
             android:hint="상품 설명"
             android:minLines="3" />
 
+        <TextView
+            android:text="인원수 선택"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/numSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
 
 
 
@@ -41,11 +53,12 @@
             android:backgroundTint="#97CD2D"
             android:text="사진 선택" />
 
-        <ImageView
-            android:id="@+id/photoPreview"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/photoRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:orientation="horizontal"
+            android:padding="8dp" />
 
         <TextView
             android:text="카테고리 선택"

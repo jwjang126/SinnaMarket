@@ -1,51 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:padding="16dp">
 
         <!-- 상품 이미지 -->
-        <ImageView
-            android:id="@+id/detailImage"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/detailPhotoRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background" />
+            android:layout_height="200dp"
+            android:orientation="horizontal"/>
 
         <!-- 상품 이름 -->
         <TextView
-            android:id="@+id/detailName"
+            android:id="@+id/detailItemName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="상품명"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp" />
-
-        <!-- 상품 가격 -->
-        <TextView
-            android:id="@+id/detailPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10000원"
             android:textSize="20sp"
-            android:textColor="#FF5722"
-            android:layout_marginTop="6dp" />
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 작성자 정보 -->
+        <TextView
+            android:id="@+id/detailAuthorInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="작성자"
+            android:layout_marginTop="4dp"/>
 
         <!-- 상품 설명 -->
         <TextView
-            android:id="@+id/detailDescription"
+            android:id="@+id/detailItemDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 가격 -->
+        <TextView
+            android:id="@+id/detailItemPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"/>
+
+        <!-- 투표 옵션 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="투표 가능 시간"
+            android:layout_marginTop="12dp"/>
+
+        <LinearLayout
+            android:id="@+id/voteOptionsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="상품 상세 설명이 들어갑니다."
-            android:textSize="16sp"
-            android:layout_marginTop="12dp"
-            android:lineSpacingExtra="4dp" />
+            android:orientation="vertical"
+            android:layout_marginTop="4dp"/>
 
     </LinearLayout>
 </ScrollView>
