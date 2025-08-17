@@ -6,6 +6,8 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
@@ -29,6 +31,9 @@
             android:value="ce3shefx6j" />
 
         <!-- DetailActivity 유지 -->
+
+        <activity android:name=".main.MapSelectActivity" />
+
         <activity
             android:name=".main.DetailActivity"
             android:exported="false" />
