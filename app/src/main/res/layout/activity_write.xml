@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:backgroundTint="#97CD2D"
-            android:text="지도에서 고르기" />
+            android:text="지도에서 고르기 (필수)" />
 
         <CheckBox
             android:id="@+id/checkbox"

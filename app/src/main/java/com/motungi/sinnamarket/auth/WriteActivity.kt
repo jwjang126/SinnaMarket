@@ -1,5 +1,6 @@
 package com.motungi.sinnamarket.auth
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -231,6 +232,39 @@ class WriteActivity : AppCompatActivity() {
         }
 
         uploadImages()
+    }
+
+    private var selectedLat: Double = 0.0
+    private var selectedLng: Double = 0.0
+    private var selectedLocationDesc: String = ""
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
+            val lat = data?.getDoubleExtra("selectedLat", 0.0) ?: 0.0
+            val lng = data?.getDoubleExtra("selectedLng", 0.0) ?: 0.0
+
+            // 대략적 위치 설명 입력
+            val editText = EditText(this)
+            editText.hint = "  예: 경북대학교 IT1호관 앞"
+            editText.setText("")
+
+            android.app.AlertDialog.Builder(this)
+                .setTitle("위치 설명 입력")
+                .setMessage("선택한 위치를 설명해주세요")
+                .setView(editText)
+                .setPositiveButton("확인") { dialog, _ ->
+                    val locationDescription = editText.text.toString()
+                    // Firestore에 저장할 때 사용
+                    selectedLat = lat
+                    selectedLng = lng
+                    selectedLocationDesc = locationDescription
+                    Toast.makeText(this, "위치가 설정되었습니다: $locationDescription", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
+                .show()
+        }
     }
 
 }
