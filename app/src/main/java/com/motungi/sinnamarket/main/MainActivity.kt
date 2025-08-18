@@ -2,37 +2,51 @@ package com.motungi.sinnamarket.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.PopupMenu
+import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import com.motungi.sinnamarket.R
+import com.motungi.sinnamarket.auth.LoginActivity
 import com.motungi.sinnamarket.auth.WriteActivity
 import com.motungi.sinnamarket.databinding.ActivityMainBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.motungi.sinnamarket.auth.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var selectedRegion: String = "수성구"
+
+    private val districtMap = mapOf(
+        "중구" to listOf("선택하세요", "동인동", "삼덕동", "성내동", "대신동", "남산동", "대봉동"),
+        "동구" to listOf("선택하세요", "신암동", "신천동", "효목동", "도평동", "불로봉무동", "지저동", "동촌동", "방촌동", "해안동", "안심동", "혁신동", "공산동"),
+        "서구" to listOf("선택하세요", "내당동", "비산동", "평리동", "상중이동", "원대동"),
+        "남구" to listOf("선택하세요", "이천동", "봉덕동", "대명동"),
+        "북구" to listOf("선택하세요", "고성동", "칠성동", "침산동", "노원동", "산격동", "복현동", "대현동", "검단동", "무태조야동", "관문동", "태전동", "구암동", "관음동", "읍내동", "동촌동", "국우동"),
+        "수성구" to listOf("선택하세요", "범어동", "만촌동", "수성동", "황금동", "중동", "상동", "파동", "두산동", "지산동", "범물동", "고산동"),
+        "달서구" to listOf("선택하세요", "성당동", "두류동", "본리동", "감삼동", "죽전동", "장기동", "용산동", "이곡동", "신당동", "월성동", "진천동", "유천동", "상인동", "도원동", "송현동", "본동"),
+        "달성군" to listOf("선택하세요", "화원읍", "논공읍", "다사읍", "유가읍", "옥포읍", "현풍읍", "가창면", "하빈면", "구지면"),
+        "군위군" to listOf("선택하세요", "군위읍", "소보면", "효령면", "부계면", "우보면", "의흥면", "산성면", "삼국유사면")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val categories = listOf("가공식품(냉동)", "가공식품(비냉동)", "신선식품", "대량 물건")
+        val categories = listOf("가공식품(냉동)", "가공식품(비냉동)", "신선식품", "식품 이외")
         val viewPager = binding.viewPager
         val tabLayout = binding.tabLayout
 
-
-        viewPager.adapter = ViewPagerAdapter(this, categories)
+        viewPager.adapter = ViewPagerAdapter(this, categories, selectedRegion)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = categories[position]
         }.attach()
@@ -57,12 +71,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.regionText.setOnClickListener {
-            showRegionMenu(it)
+            showRegionDialog()
         }
 
-        // 검색 아이콘 클릭 시 키보드 뜨도록 수정
         binding.searchIcon.setOnClickListener {
-            // 키보드를 띄우는 로직
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
             Toast.makeText(this, "키보드가 열립니다.", Toast.LENGTH_SHORT).show()
@@ -79,8 +91,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java).apply {
                 addFlags(
                     Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK
                 )
             }
             startActivity(intent)
@@ -99,16 +111,41 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, myInfo, Toast.LENGTH_LONG).show()
     }
 
-    private fun showRegionMenu(view: View) {
-        val popupMenu = PopupMenu(this, view)
-        popupMenu.menu.add(Menu.NONE, 0, 0, "수성구")
-        popupMenu.menu.add(Menu.NONE, 1, 1, "동구")
-        popupMenu.menu.add(Menu.NONE, 2, 2, "서구")
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            binding.regionText.text = menuItem.title
-            Toast.makeText(this, "${menuItem.title}로 지역이 변경되었습니다.", Toast.LENGTH_SHORT).show()
-            true
+    private fun showRegionDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_region_selection, null)
+        val districtSpinner: Spinner = dialogView.findViewById(R.id.districtSpinner)
+        val dongSpinner: Spinner = dialogView.findViewById(R.id.dongSpinner)
+
+        val districts = districtMap.keys.toList()
+        districtSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, districts)
+
+        districtSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedDistrict = parent?.getItemAtPosition(position).toString()
+                val dongList = districtMap[selectedDistrict] ?: listOf("선택하세요")
+                dongSpinner.adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, dongList)
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-        popupMenu.show()
+
+        AlertDialog.Builder(this)
+            .setTitle("거래 지역 선택")
+            .setView(dialogView)
+            .setPositiveButton("선택") { dialog, _ ->
+                val selectedDong = dongSpinner.selectedItem.toString()
+                if (selectedDong != "선택하세요") {
+                    binding.regionText.text = selectedDong
+                    selectedRegion = selectedDong
+                    (binding.viewPager.adapter as? ViewPagerAdapter)?.updateRegion(selectedDong)
+                    Toast.makeText(this, "$selectedDong 로 지역이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "동을 선택해 주세요.", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }
