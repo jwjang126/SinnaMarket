@@ -48,14 +48,14 @@ class LoginActivity : AppCompatActivity() {
                                 Toast.makeText(this, "차단된 계정입니다.", Toast.LENGTH_SHORT).show()
                                 auth.signOut()
                             } else {
-                                Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "로그인되었습니다", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this, MainActivity::class.java))
                                 finish()
                             }
                         }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "로그인 실패: ${it.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "이메일과 비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show()
                 }
         }
 

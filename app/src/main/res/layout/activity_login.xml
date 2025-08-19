@@ -23,6 +23,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:text="로그인"
+        android:textColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:backgroundTint="#97CD2D"/>
