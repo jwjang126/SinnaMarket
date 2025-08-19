@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("com.google.gms.google-services")
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -56,7 +56,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
-    implementation(libs.androidx.activity)
+    implementation("androidx.activity:activity-ktx:1.8.2")
+
 
     // Test
     testImplementation("junit:junit:4.13.2")

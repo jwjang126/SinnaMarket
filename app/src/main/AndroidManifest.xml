@@ -5,7 +5,8 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false" />
+        android:required="false"
+        />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -35,10 +36,10 @@
         <activity android:name=".main.MapSelectActivity" />
         <activity
             android:name=".main.DetailActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".auth.WriteActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".splash.SplashActivity"
             android:exported="true">
