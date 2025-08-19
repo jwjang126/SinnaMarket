@@ -3,6 +3,7 @@ package com.motungi.sinnamarket.splash
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.motungi.sinnamarket.R
 import com.motungi.sinnamarket.auth.LoginActivity
