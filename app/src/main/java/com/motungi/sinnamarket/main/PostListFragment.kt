@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.motungi.sinnamarket.databinding.FragmentPostListBinding
-import com.motungi.sinnamarket.main.DetailActivity // DetailActivity import 추가
+import com.motungi.sinnamarket.main.DetailActivity
+import com.motungi.sinnamarket.main.Post
+import com.motungi.sinnamarket.main.PostAdapter
+import com.motungi.sinnamarket.R
 
 class PostListFragment : Fragment() {
 
@@ -40,20 +43,32 @@ class PostListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // PostAdapter를 초기화할 때 클릭 리스너를 전달합니다.
+        // PostAdapter 초기화 시 클릭 리스너에서 post.id를 사용하도록 수정
         postAdapter = PostAdapter(emptyList()) { post ->
-            // PostListFragment.kt:71
             val intent = Intent(context, DetailActivity::class.java)
-            // post 객체에 id 필드가 없으므로, Firestore의 문서 ID를 직접 전달해야 합니다.
-            // 이 로직은 `listenForPosts`에서 snapshot을 가져올 때 함께 저장되어야 합니다.
-            intent.putExtra("productId", post.productid)
+            // Post 데이터 클래스에 id 필드를 추가했으므로, 이제 post.id를 사용합니다.
+            intent.putExtra("productId", post.id)
             startActivity(intent)
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = postAdapter
 
+        // tvNoPosts는 View Binding으로 접근하므로 별도의 선언이 필요 없습니다.
+        // 초기에는 보이지 않도록 설정
+        binding.tvNoPosts.visibility = View.GONE
+
         listenForPosts()
+    }
+
+    /**
+     * 외부에서 새로운 지역 정보를 받아서 데이터를 새로고침하는 함수
+     */
+    fun updateRegion(newRegion: String) {
+        if (this.regionName != newRegion) {
+            this.regionName = newRegion
+            listenForPosts() // 지역이 바뀌면 Firebase 쿼리를 다시 실행합니다.
+        }
     }
 
     private fun listenForPosts() {
@@ -63,9 +78,9 @@ class PostListFragment : Fragment() {
         }
 
         val db = FirebaseFirestore.getInstance()
-        db.collection("product") // Firebase 데이터베이스 컬렉션 이름과 일치하도록 수정
+        db.collection("product")
             .whereEqualTo("category", categoryName)
-            .whereEqualTo("region.dong", regionName) // 지역별 필터링
+            .whereEqualTo("region.dong", regionName)
             .orderBy("uploadedAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
@@ -74,15 +89,23 @@ class PostListFragment : Fragment() {
                 }
 
                 if (snapshots != null) {
-                    val posts = snapshots.map { doc ->
+                    // Firestore 문서 ID를 Post 객체에 할당하는 로직 추가
+                    val posts = snapshots.documents.mapNotNull { doc ->
                         val post = doc.toObject(Post::class.java)
-                        post.copy(productid = doc.id)  // 🔹 문서 ID를 Post 객체에 저장
+                        post?.copy(id = doc.id)
                     }
                     postAdapter.updatePosts(posts)
+                    Log.d("PostListFragment", "Loaded ${posts.size} posts in real-time.")
 
-                    Log.d("PostListFragment", "Loaded ${posts.size} posts, first productId: ${posts.firstOrNull()?.productid}")
+                    // 게시글이 없을 때 메시지를 보여주는 로직 추가
+                    if (posts.isEmpty()) {
+                        binding.tvNoPosts.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = View.GONE
+                    } else {
+                        binding.tvNoPosts.visibility = View.GONE
+                        binding.recyclerView.visibility = View.VISIBLE
+                    }
                 }
-
             }
     }
 

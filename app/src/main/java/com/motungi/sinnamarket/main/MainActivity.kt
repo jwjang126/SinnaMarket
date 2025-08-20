@@ -1,18 +1,16 @@
 package com.motungi.sinnamarket.main
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.PopupMenu
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.motungi.sinnamarket.R
@@ -23,6 +21,7 @@ import com.motungi.sinnamarket.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var selectedRegion: String = "수성구"
 
     private val districtMap = mapOf(
@@ -42,19 +41,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val categories = listOf("가공식품(냉동)", "가공식품(비냉동)", "신선식품", "식품 이외")
-        val viewPager = binding.viewPager
-        val tabLayout = binding.tabLayout
+        // SharedPreferences에서 마지막으로 설정된 지역 정보를 불러옵니다.
+        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        selectedRegion = prefs.getString("selected_region", "수성구") ?: "수성구"
+        binding.regionText.text = selectedRegion
 
-        viewPager.adapter = ViewPagerAdapter(this, categories, selectedRegion)
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        val categories = listOf("가공식품(냉동)", "가공식품(비냉동)", "신선식품", "식품 이외")
+        viewPagerAdapter = ViewPagerAdapter(this, categories, selectedRegion)
+        binding.viewPager.adapter = viewPagerAdapter
+        binding.viewPager.offscreenPageLimit = 1
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = categories[position]
         }.attach()
 
         binding.bottomNavigationBar.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    viewPager.currentItem = 0
+                    binding.viewPager.currentItem = 0
                     Toast.makeText(this, "홈 화면입니다.", Toast.LENGTH_SHORT).show()
                     true
                 }
@@ -75,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.searchIcon.setOnClickListener {
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
             Toast.makeText(this, "키보드가 열립니다.", Toast.LENGTH_SHORT).show()
         }
@@ -101,6 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMyInfo() {
+        // 이 부분은 Firebase에서 실제 사용자 정보를 불러와야 합니다.
         val myInfo = """
             이름: 김민준
             전화번호: 010-1234-5678
@@ -133,13 +138,20 @@ class MainActivity : AppCompatActivity() {
             .setView(dialogView)
             .setPositiveButton("선택") { dialog, _ ->
                 val selectedDong = dongSpinner.selectedItem.toString()
-                if (selectedDong != "선택하세요") {
+                if (selectedDong != "선택하세요" && selectedDong != selectedRegion) {
                     binding.regionText.text = selectedDong
                     selectedRegion = selectedDong
-                    (binding.viewPager.adapter as? ViewPagerAdapter)?.updateRegion(selectedDong)
+
+                    // SharedPreferences에 지역 정보 저장
+                    val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    prefs.edit().putString("selected_region", selectedDong).apply()
+
+                    // ViewPagerAdapter를 통해 모든 Fragment 업데이트
+                    viewPagerAdapter.updateRegion(selectedDong)
+
                     Toast.makeText(this, "$selectedDong 로 지역이 변경되었습니다.", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "동을 선택해 주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "동을 선택하거나, 기존 지역과 다른 지역을 선택해 주세요.", Toast.LENGTH_SHORT).show()
                 }
                 dialog.dismiss()
             }
