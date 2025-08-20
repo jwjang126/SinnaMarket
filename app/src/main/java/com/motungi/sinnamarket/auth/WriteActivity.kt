@@ -202,12 +202,53 @@ class WriteActivity : AppCompatActivity() {
         )
     }
 
+    private fun uploadImagesToStorage(
+        docRefId: String,
+        index: Int,
+        imageUrls: MutableList<String>,
+        storageRef: com.google.firebase.storage.StorageReference,
+        db: FirebaseFirestore
+    ) {
+        if (index >= imageUris.size) {
+            // 모든 이미지 업로드 완료 후 Firestore에 URL 업데이트
+            db.collection("product").document(docRefId)
+                .update("imageUrls", imageUrls)
+                .addOnCompleteListener {
+                    Toast.makeText(this, "상품 등록 완료", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    isUploading = false
+                    submitBtn.isEnabled = true
+                }
+            return
+        }
+
+        val uri = imageUris[index]
+        val fileName = "images/${UUID.randomUUID()}.jpg"
+        val imageRef = storageRef.child(fileName)
+
+        imageRef.putFile(uri)
+            .addOnSuccessListener {
+                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    imageUrls.add(downloadUri.toString())
+                    uploadImagesToStorage(docRefId, index + 1, imageUrls, storageRef, db)
+                }
+            }
+            .addOnFailureListener {
+                Log.e("WriteActivity", "이미지 업로드 실패: ${it.message}")
+                uploadImagesToStorage(docRefId, index + 1, imageUrls, storageRef, db)
+            }
+    }
+
+
     private fun saveItemToFirestore(lat: Double, lng: Double, isChecked: Boolean, voteOptions: List<Map<String, Any>>, authorid: String) {
         val itemName = findViewById<EditText>(R.id.itemNameInput).text.toString()
         val itemDesc = findViewById<EditText>(R.id.itemDescInput).text.toString()
-        val itemPrice = findViewById<EditText>(R.id.itemPriceInput).text.toString().toIntOrNull() ?: 0
+        val itemPrice =
+            findViewById<EditText>(R.id.itemPriceInput).text.toString().toIntOrNull() ?: 0
         val category = findViewById<Spinner>(R.id.categorySpinner).selectedItem.toString()
-        val numPeople = findViewById<Spinner>(R.id.numSpinner).selectedItem.toString().replace("[^0-9]".toRegex(), "").toIntOrNull() ?: 0
+        val numPeople = findViewById<Spinner>(R.id.numSpinner).selectedItem.toString()
+            .replace("[^0-9]".toRegex(), "").toIntOrNull() ?: 0
         val district = findViewById<Spinner>(R.id.districtSpinner).selectedItem.toString()
         val dong = findViewById<Spinner>(R.id.dongSpinner).selectedItem.toString()
 
@@ -230,43 +271,17 @@ class WriteActivity : AppCompatActivity() {
             "uploadedAt" to System.currentTimeMillis()
         )
 
-        fun uploadImages(index: Int = 0, docRefId: String? = null) {
-            if (index >= imageUris.size) {
-                if (docRefId == null) {
-                    db.collection("product").add(data).addOnSuccessListener { docRef ->
-                        uploadImages(0, docRef.id)
-                    }
-                } else {
-                    db.collection("product").document(docRefId)
-                        .update("imageUrls", imageUrls)
-                        .addOnCompleteListener {
-                            Toast.makeText(this, "상품 등록 완료", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, MainActivity::class.java))
-                            finish()
-                            isUploading = false
-                            submitBtn.isEnabled = true
-                        }
-                }
-                return
+        // 1️⃣ Firestore 문서 먼저 생성
+        val docRef = db.collection("product").document()
+        docRef.set(data)
+            .addOnSuccessListener {
+                // 2️⃣ 이미지 업로드
+                uploadImagesToStorage(docRef.id, 0, imageUrls, storageRef, db)
             }
-
-            val uri = imageUris[index]
-            val fileName = "images/${UUID.randomUUID()}.jpg"
-            val imageRef = storageRef.child(fileName)
-
-            imageRef.putFile(uri)
-                .addOnSuccessListener {
-                    imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        imageUrls.add(downloadUri.toString())
-                        uploadImages(index + 1, docRefId)
-                    }
-                }
-                .addOnFailureListener {
-                    Log.e("WriteActivity", "이미지 업로드 실패: ${it.message}")
-                    uploadImages(index + 1, docRefId)
-                }
-        }
-
-        uploadImages()
+            .addOnFailureListener {
+                Toast.makeText(this, "상품 등록 실패: ${it.message}", Toast.LENGTH_SHORT).show()
+                isUploading = false
+                submitBtn.isEnabled = true
+            }
     }
 }
