@@ -23,10 +23,10 @@
             android:id="@+id/etPhonenumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="전화번호" />
+            android:hint="전화번호 (ex: 01012341234)" />
         <EditText
             android:id="@+id/etEmail"
-            android:hint="이메일"
+            android:hint="이메일 (ex: abc@abcd.com)"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <EditText
@@ -54,6 +54,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSignUp"
             android:text="회원가입"
+            android:textColor="#FFFFFF"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:backgroundTint="#97CD2D" />

@@ -129,7 +129,7 @@ class SignUpActivity : AppCompatActivity() {
                 // Firestore에 저장
                 db.collection("users").document(uid).set(user)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     }
