@@ -43,12 +43,18 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
         // 확인 버튼 클릭
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             val centerLatLng = naverMap.cameraPosition.target
-            val address = getAddressFromLatLng(centerLatLng.latitude, centerLatLng.longitude)
+            val (fullAddress, district, dong) = getAddressFromLatLng(
+                centerLatLng.latitude,
+                centerLatLng.longitude
+            )
 
             val resultIntent = Intent()
             resultIntent.putExtra("selectedLat", centerLatLng.latitude)
             resultIntent.putExtra("selectedLng", centerLatLng.longitude)
-            resultIntent.putExtra("selectedAddress", address)
+            resultIntent.putExtra("selectedAddress", fullAddress)
+            resultIntent.putExtra("district", district)
+            resultIntent.putExtra("dong", dong)
+
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
@@ -66,18 +72,43 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun getAddressFromLatLng(lat: Double, lng: Double): String {
-        val geocoder = Geocoder(this, Locale.KOREA) // 한국어 Locale 강제 적용
+    private fun getAddressFromLatLng(lat: Double, lng: Double): Triple<String, String, String> {
+        val geocoder = Geocoder(this, Locale.KOREA) // 한국어 Locale 적용
         return try {
             val addresses = geocoder.getFromLocation(lat, lng, 1)
             if (!addresses.isNullOrEmpty()) {
-                addresses[0].getAddressLine(0) ?: "주소 미상"
+                val address = addresses[0]
+                val fullAddress = address.getAddressLine(0) ?: "주소 미상"
+
+                val parts = fullAddress.split(" ")
+                var district = ""
+                var dong = ""
+
+                for (i in parts.indices) {
+                    if (parts[i].endsWith("구") || parts[i].endsWith("군")) {
+                        district = parts[i]
+                    }
+                    if (parts[i].endsWith("동") || parts[i].endsWith("읍") || parts[i].endsWith("면")) {
+                        dong = parts[i]
+                    }
+                }
+
+                if (district.isEmpty()) {
+                    for (i in parts.indices) {
+                        if (parts[i].endsWith("시")) {
+                            district = parts[i]
+                            break
+                        }
+                    }
+                }
+
+                Triple(fullAddress, district, dong)
             } else {
-                "주소 미상"
+                Triple("주소 미상", "", "")
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            "주소 변환 실패"
+            Triple("주소 변환 실패", "", "")
         }
     }
 

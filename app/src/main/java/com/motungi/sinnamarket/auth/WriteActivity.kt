@@ -37,6 +37,9 @@ class WriteActivity : AppCompatActivity() {
         "달성군" to listOf("선택하세요", "화원읍", "논공읍", "다사읍", "유가읍", "옥포읍", "현풍읍", "가창면", "하빈면", "구지면"),
         "군위군" to listOf("선택하세요", "군위읍", "소보면", "효령면", "부계면", "우보면", "의흥면", "산성면", "삼국유사면")
     )
+    private var district: String = ""
+    private var dong: String = ""
+
 
     private val imageUris = mutableListOf<Uri>()
     private lateinit var photoAdapter: PhotoAdapter
@@ -79,9 +82,14 @@ class WriteActivity : AppCompatActivity() {
                 val selectedLat = data?.getDoubleExtra("selectedLat", 0.0) ?: 0.0
                 val selectedLng = data?.getDoubleExtra("selectedLng", 0.0) ?: 0.0
                 val selectedAddress = data?.getStringExtra("selectedAddress") ?: "주소 없음"
-                // 예: TextView에 표시
+                val district = data?.getStringExtra("district") ?: ""
+                val dong = data?.getStringExtra("dong") ?: ""
+
                 findViewById<TextView>(R.id.selectedAddress).text =
-                    "$selectedAddress"
+                    "$selectedAddress\n($district, $dong)"
+
+                this.district = district
+                this.dong = dong
 
                 val dialogView = layoutInflater.inflate(R.layout.dialog_input_location, null)
                 val editText = dialogView.findViewById<TextInputEditText>(R.id.editLocationDesc)
@@ -258,8 +266,8 @@ class WriteActivity : AppCompatActivity() {
         val category = findViewById<Spinner>(R.id.categorySpinner).selectedItem.toString()
         val numPeople = findViewById<Spinner>(R.id.numSpinner).selectedItem.toString()
             .replace("[^0-9]".toRegex(), "").toIntOrNull() ?: 0
-        val district = findViewById<Spinner>(R.id.districtSpinner).selectedItem.toString()
-        val dong = findViewById<Spinner>(R.id.dongSpinner).selectedItem.toString()
+        val district = this.district
+        val dong = this.dong
 
         val db = FirebaseFirestore.getInstance()
         val storageRef = FirebaseStorage.getInstance().reference
