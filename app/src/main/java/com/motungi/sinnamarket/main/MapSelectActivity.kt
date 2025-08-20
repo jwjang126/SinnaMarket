@@ -92,14 +92,13 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
                         dong = parts[i]
                     }
 
-                    // '가'로 끝나는 경우 '동'만 남기도록 처리
-                    if (parts[i].endsWith("가")) {
-                        val dongIndex = parts[i].indexOf("동")
-                        if (dongIndex != -1) {
-                            dong = parts[i].substring(0, dongIndex + 1)
-                        } else {
-                            dong = parts[i]
-                        }
+                    val dongOrRo = parts.find {
+                        it.endsWith("동") || it.endsWith("로") || it.endsWith("가") || it.endsWith("길") || it.endsWith("읍") || it.endsWith("면")
+                    }
+
+                    if (dongOrRo != null) {
+                        // 숫자가 나올 때까지의 문자열만 추출
+                        dong = dongOrRo.takeWhile { !it.isDigit() }
                     }
                 }
 
