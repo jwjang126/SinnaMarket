@@ -3,6 +3,7 @@ package com.motungi.sinnamarket.main
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -18,6 +19,7 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import java.util.Locale
 
 class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -41,9 +43,12 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
         // 확인 버튼 클릭
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             val centerLatLng = naverMap.cameraPosition.target
+            val address = getAddressFromLatLng(centerLatLng.latitude, centerLatLng.longitude)
+
             val resultIntent = Intent()
             resultIntent.putExtra("selectedLat", centerLatLng.latitude)
             resultIntent.putExtra("selectedLng", centerLatLng.longitude)
+            resultIntent.putExtra("selectedAddress", address)
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
@@ -58,6 +63,21 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
         // 권한 확인
         if (!checkLocationPermission()) {
             requestLocationPermission()
+        }
+    }
+
+    private fun getAddressFromLatLng(lat: Double, lng: Double): String {
+        val geocoder = Geocoder(this, Locale.KOREA) // 한국어 Locale 강제 적용
+        return try {
+            val addresses = geocoder.getFromLocation(lat, lng, 1)
+            if (!addresses.isNullOrEmpty()) {
+                addresses[0].getAddressLine(0) ?: "주소 미상"
+            } else {
+                "주소 미상"
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "주소 변환 실패"
         }
     }
 

@@ -82,43 +82,51 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/districtSpinner"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+
+            <Button
+                android:id="@+id/openMap"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#97CD2D"
+                android:text="지도에서 고르기 (필수)" />
+
+            <TextView
+                android:hint="선택된 위치"
+                android:id="@+id/selectedAddress"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <Spinner
-                android:id="@+id/dongSpinner"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <TextView
+                android:hint="상세 설명"
+                android:id="@+id/detailAddress"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:textSize="17sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:text="거래 위치 조율 가능"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/openMap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:backgroundTint="#97CD2D"
-            android:text="지도에서 고르기 (필수)" />
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:text="거래 위치 조율 가능"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
         <!-- 거래 희망 시간 -->
         <TextView
             android:text="거래 희망 날짜"
             android:textStyle="bold"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <LinearLayout

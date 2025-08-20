@@ -11,6 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -74,20 +76,30 @@ class WriteActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
-                selectedLat = data?.getDoubleExtra("selectedLat", 0.0) ?: 0.0
-                selectedLng = data?.getDoubleExtra("selectedLng", 0.0) ?: 0.0
+                val selectedLat = data?.getDoubleExtra("selectedLat", 0.0) ?: 0.0
+                val selectedLng = data?.getDoubleExtra("selectedLng", 0.0) ?: 0.0
+                val selectedAddress = data?.getStringExtra("selectedAddress") ?: "주소 없음"
+                // 예: TextView에 표시
+                findViewById<TextView>(R.id.selectedAddress).text =
+                    "$selectedAddress"
 
-                val editText = EditText(this).apply { hint = "예: 경북대학교 IT1호관 앞" }
-                AlertDialog.Builder(this)
-                    .setTitle("위치 설명 입력")
-                    .setView(editText)
-                    .setPositiveButton("확인") { dialog, _ ->
-                        selectedLocationDesc = editText.text.toString()
-                        Toast.makeText(this, "위치가 설정되었습니다: $selectedLocationDesc", Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
-                    .show()
+                val dialogView = layoutInflater.inflate(R.layout.dialog_input_location, null)
+                val editText = dialogView.findViewById<TextInputEditText>(R.id.editLocationDesc)
+
+                val bottomSheet = BottomSheetDialog(this)
+                bottomSheet.setContentView(dialogView)
+
+                dialogView.findViewById<Button>(R.id.btnConfirm).setOnClickListener {
+                    selectedLocationDesc = editText.text.toString()
+                    findViewById<TextView>(R.id.detailAddress).text = selectedLocationDesc
+                    bottomSheet.dismiss()
+                }
+
+                dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener {
+                    bottomSheet.dismiss()
+                }
+
+                bottomSheet.show()
             }
         }
 
@@ -133,14 +145,11 @@ class WriteActivity : AppCompatActivity() {
         // --- 스피너 어댑터 ---
         val numSpinner = findViewById<Spinner>(R.id.numSpinner)
         val categorySpinner = findViewById<Spinner>(R.id.categorySpinner)
-        val districtSpinner = findViewById<Spinner>(R.id.districtSpinner)
-        val dongSpinner = findViewById<Spinner>(R.id.dongSpinner)
         val yearSpinner = findViewById<Spinner>(R.id.yearSpinner)
         val monthSpinner = findViewById<Spinner>(R.id.monthSpinner)
         val daySpinner = findViewById<Spinner>(R.id.daySpinner)
 
         categorySpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categories)
-        districtSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, districtMap.keys.toList())
         numSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, numOptions)
         yearSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, year)
         monthSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, month)
@@ -151,7 +160,7 @@ class WriteActivity : AppCompatActivity() {
         for (spinner in minSpinners) spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, min)
 
         // --- 지역 선택 ---
-        districtSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        /* districtSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
                 val selectedDistrict = parent?.getItemAtPosition(position).toString()
                 val dongList = districtMap[selectedDistrict] ?: listOf("선택하세요")
@@ -159,7 +168,7 @@ class WriteActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
+        } */
 
         findViewById<Button>(R.id.openMap).setOnClickListener {
             pickMapLauncher.launch(Intent(this, MapSelectActivity::class.java))
