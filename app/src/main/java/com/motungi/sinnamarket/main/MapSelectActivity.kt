@@ -91,6 +91,16 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (parts[i].endsWith("동") || parts[i].endsWith("읍") || parts[i].endsWith("면")) {
                         dong = parts[i]
                     }
+
+                    // '가'로 끝나는 경우 '동'만 남기도록 처리
+                    if (parts[i].endsWith("가")) {
+                        val dongIndex = parts[i].indexOf("동")
+                        if (dongIndex != -1) {
+                            dong = parts[i].substring(0, dongIndex + 1)
+                        } else {
+                            dong = parts[i]
+                        }
+                    }
                 }
 
                 if (district.isEmpty()) {
