@@ -1,4 +1,4 @@
-package com.motungi.sinnamarket.auth
+package com.motungi.sinnamarket.main
 
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.motungi.sinnamarket.R
+import com.motungi.sinnamarket.auth.PhotoAdapter
 
 class DetailActivity : AppCompatActivity() {
 
@@ -36,7 +37,12 @@ class DetailActivity : AppCompatActivity() {
 
         voteOptionsContainer = findViewById(R.id.voteOptionsContainer)
 
-        val productId = intent.getStringExtra("productId") ?: return
+        val productId = intent.getStringExtra("productId")
+        if (productId.isNullOrEmpty()) {
+            Toast.makeText(this, "상품 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         // 상품 데이터 가져오기
         db.collection("product").document(productId).get()

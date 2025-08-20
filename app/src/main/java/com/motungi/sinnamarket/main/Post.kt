@@ -1,6 +1,7 @@
 package com.motungi.sinnamarket.main
 
 data class Post(
+    val productid: String = "", //문서 id
     val authorid: String = "",
     val category: String = "",
     val description: String = "",

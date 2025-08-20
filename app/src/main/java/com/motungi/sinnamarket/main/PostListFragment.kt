@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.motungi.sinnamarket.databinding.FragmentPostListBinding
-import com.motungi.sinnamarket.auth.DetailActivity // DetailActivity import 추가
+import com.motungi.sinnamarket.main.DetailActivity // DetailActivity import 추가
 
 class PostListFragment : Fragment() {
 
@@ -46,8 +46,7 @@ class PostListFragment : Fragment() {
             val intent = Intent(context, DetailActivity::class.java)
             // post 객체에 id 필드가 없으므로, Firestore의 문서 ID를 직접 전달해야 합니다.
             // 이 로직은 `listenForPosts`에서 snapshot을 가져올 때 함께 저장되어야 합니다.
-            // 현재는 임시로 title을 전달
-            intent.putExtra("productId", post.title)
+            intent.putExtra("productId", post.productid)
             startActivity(intent)
         }
 
@@ -75,10 +74,15 @@ class PostListFragment : Fragment() {
                 }
 
                 if (snapshots != null) {
-                    val posts = snapshots.toObjects(Post::class.java)
+                    val posts = snapshots.map { doc ->
+                        val post = doc.toObject(Post::class.java)
+                        post.copy(productid = doc.id)  // 🔹 문서 ID를 Post 객체에 저장
+                    }
                     postAdapter.updatePosts(posts)
-                    Log.d("PostListFragment", "Loaded ${posts.size} posts in real-time.")
+
+                    Log.d("PostListFragment", "Loaded ${posts.size} posts, first productId: ${posts.firstOrNull()?.productid}")
                 }
+
             }
     }
 
