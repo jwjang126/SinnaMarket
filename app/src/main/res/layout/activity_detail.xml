@@ -30,16 +30,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="작성자"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            android:gravity="end"
+            />
 
-        <!-- 상품 설명 -->
-        <TextView
-            android:id="@+id/detailItemDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
 
-        <!-- 가격 -->
         <TextView
             android:id="@+id/detailItemPrice"
             android:layout_width="wrap_content"
@@ -48,12 +43,41 @@
             android:textStyle="bold"
             android:layout_marginTop="4dp"/>
 
+
+        <!-- 상품 설명 -->
+        <TextView
+            android:id="@+id/detailItemDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/detaillocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="희망 장소"
+            android:layout_marginTop="12dp"/>
+        <TextView
+            android:id="@+id/detailrelocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/detaildate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="날짜"
+            android:layout_marginTop="12dp"/>
+
         <!-- 투표 옵션 -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="투표 가능 시간"
             android:layout_marginTop="12dp"/>
+
 
         <LinearLayout
             android:id="@+id/voteOptionsContainer"

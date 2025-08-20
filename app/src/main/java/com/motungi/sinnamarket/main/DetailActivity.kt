@@ -51,9 +51,17 @@ class DetailActivity : AppCompatActivity() {
 
                 val itemName = doc.getString("title") ?: ""
                 val itemDesc = doc.getString("description") ?: ""
+                //파베에 아직 날짜가 안올라가서 생기는 문제...일단 price로
+                //val date = doc.getLong("price") ?: 0
+                val district = doc.getString("region.district") ?: ""
+                val dong = doc.getString("region.dong") ?: ""
                 val itemPrice = doc.getLong("price") ?: 0
                 val images = doc.get("imageUrls") as? List<String> ?: listOf()
                 val uris = images.map { Uri.parse(it) }
+                val isAvailable = doc.getBoolean("re_location") ?: false
+
+
+
 
                 // 사진 리스트 세팅
                 imageUrls.clear()
@@ -65,12 +73,20 @@ class DetailActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.detailItemName).text = itemName
                 findViewById<TextView>(R.id.detailItemDesc).text = itemDesc
                 findViewById<TextView>(R.id.detailItemPrice).text = "$itemPrice 원"
+                if(isAvailable){
+                    findViewById<TextView>(R.id.detailrelocation).text = "위치 조율 가능"
+                }
+                else{
+                    findViewById<TextView>(R.id.detailrelocation).text = "위치 조율 불가능"
+                }
+                //findViewById<TextView>(R.id.detaildate).text = "$date 원"
+                findViewById<TextView>(R.id.detaillocation).text = "$district  $dong"
 
                 // 작성자 정보
                 if (authorId.isNotEmpty()) {
                     db.collection("users").document(authorId).get()
                         .addOnSuccessListener { userDoc ->
-                            val authorName = userDoc.getString("name") ?: "Unknown"
+                            val authorName = userDoc.getString("nickname") ?: "Unknown"
                             val rating = userDoc.getDouble("rating") ?: 0.0
                             findViewById<TextView>(R.id.detailAuthorInfo).text =
                                 "작성자: $authorName (평점: $rating)"
@@ -104,8 +120,10 @@ class DetailActivity : AppCompatActivity() {
                     val timeText = optionLayout.findViewById<TextView>(R.id.voteTimeText)
                     val voteButton = optionLayout.findViewById<Button>(R.id.voteButton)
                     val qtyInput = optionLayout.findViewById<EditText>(R.id.voteQuantityInput)
+                    val voteCountText = optionLayout.findViewById<TextView>(R.id.voteCountText)
 
                     timeText.text = timeStr
+                    voteCountText.text = "투표 수: ${voters.size}"
 
                     val userId = currentUser?.uid
                     voteButton.isEnabled = userId != null && !voters.contains(userId)
