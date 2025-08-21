@@ -52,6 +52,9 @@
         <activity android:name=".auth.LoginActivity" />
         <activity android:name=".auth.SignUpActivity" />
         <activity android:name=".main.MainActivity" />
+        <activity
+            android:name=".main.MyInfoActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

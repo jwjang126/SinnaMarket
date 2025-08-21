@@ -105,15 +105,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMyInfo() {
-        // 이 부분은 Firebase에서 실제 사용자 정보를 불러와야 합니다.
-        val myInfo = """
-            이름: 김민준
-            전화번호: 010-1234-5678
-            이메일: minjun.kim@example.com
-            닉네임: 알뜰한민준
-            사는 지역: 대구 북구
-        """.trimIndent()
-        Toast.makeText(this, myInfo, Toast.LENGTH_LONG).show()
+        // Toast 메시지를 보여주는 대신 MyInfoActivity로 이동
+        val intent = Intent(this, MyInfoActivity::class.java)
+        startActivity(intent)
     }
 
     private fun showRegionDialog() {
