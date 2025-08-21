@@ -60,6 +60,16 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
             return
         }
 
+        val distance = intent.getDoubleExtra("distance", -1.0)
+        val distanceTextView = findViewById<TextView>(R.id.detaildistance)
+
+        if (distance >= 0) {
+            val formattedDistance = String.format("•  %.1f km", distance)
+            distanceTextView.text = formattedDistance
+        } else {
+            distanceTextView.text = "거리 정보 없음"
+        }
+
         mapView = findViewById(R.id.map_view)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -112,6 +122,8 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 //findViewById<TextView>(R.id.detaildate).text = "$date 원"
                 findViewById<TextView>(R.id.detailadress2).text = detailedDesc
+
+
 
                 // 작성자 정보
                 if (authorId.isNotEmpty()) {

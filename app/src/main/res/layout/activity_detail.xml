@@ -59,12 +59,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"/>
 
-        <TextView
-            android:id="@+id/detailadress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="거래 희망 주소"
-            android:layout_marginTop="12dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/detailadress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="거래 희망 주소"
+                android:layout_marginTop="12dp"/>
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:id="@+id/detaildistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="•  n km"
+                android:layout_marginTop="12dp"/>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/detailadress2"

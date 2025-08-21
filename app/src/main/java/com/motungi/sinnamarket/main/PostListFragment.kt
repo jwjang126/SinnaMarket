@@ -44,10 +44,10 @@ class PostListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // PostAdapter 초기화 시 클릭 리스너에서 post.id를 사용하도록 수정
-        postAdapter = PostAdapter(emptyList()) { post ->
+        postAdapter = PostAdapter(emptyList()) { postWithDistance ->
             val intent = Intent(context, DetailActivity::class.java)
-            // Post 데이터 클래스에 id 필드를 추가했으므로, 이제 post.id를 사용합니다.
-            intent.putExtra("productId", post.id)
+            intent.putExtra("productId", postWithDistance.post.id)
+            intent.putExtra("distance", postWithDistance.distance)
             startActivity(intent)
         }
 
@@ -89,16 +89,25 @@ class PostListFragment : Fragment() {
                 }
 
                 if (snapshots != null) {
-                    // Firestore 문서 ID를 Post 객체에 할당하는 로직 추가
-                    val posts = snapshots.documents.mapNotNull { doc ->
-                        val post = doc.toObject(Post::class.java)
-                        post?.copy(id = doc.id)
-                    }
-                    postAdapter.updatePosts(posts)
-                    Log.d("PostListFragment", "Loaded ${posts.size} posts in real-time.")
+                    val postsWithDistance = snapshots.documents.mapNotNull { doc ->
+                        val post = doc.toObject(Post::class.java)?.copy(id = doc.id)
+                        post?.let {
+                            val lat = (it.location["lat"] ?: 0.0) as Double
+                            val lng = (it.location["lng"] ?: 0.0) as Double
 
-                    // 게시글이 없을 때 메시지를 보여주는 로직 추가
-                    if (posts.isEmpty()) {
+                            // test
+                            val userLat = 35.888   // 경북대 근처 위도
+                            val userLng = 128.610  // 경북대 근처 경도
+
+                            val distance = calculateDistance(userLat, userLng, lat, lng)
+                            PostWithDistance(it, distance)
+                        }
+                    }
+
+                    postAdapter.updatePosts(postsWithDistance)
+                    Log.d("PostListFragment", "Loaded ${postsWithDistance.size} posts in real-time.")
+
+                    if (postsWithDistance.isEmpty()) {
                         binding.tvNoPosts.visibility = View.VISIBLE
                         binding.recyclerView.visibility = View.GONE
                     } else {
@@ -108,6 +117,25 @@ class PostListFragment : Fragment() {
                 }
             }
     }
+
+    private fun calculateDistance(
+        userLat: Double,
+        userLng: Double,
+        postLat: Double,
+        postLng: Double
+    ): Double {
+        val earthRadius = 6371.0 // km
+        val dLat = Math.toRadians(postLat - userLat)
+        val dLng = Math.toRadians(postLng - userLng)
+
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(postLat)) *
+                Math.sin(dLng / 2) * Math.sin(dLng / 2)
+
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return earthRadius * c // km 단위 결과 반환
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

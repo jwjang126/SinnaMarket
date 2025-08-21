@@ -8,10 +8,15 @@ import com.motungi.sinnamarket.R
 import com.motungi.sinnamarket.databinding.ItemPostBinding
 import java.util.concurrent.TimeUnit
 
-class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post) -> Unit) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+data class PostWithDistance(
+    val post: Post,
+    val distance: Double
+)
 
-    fun updatePosts(newPosts: List<Post>) {
-        posts = newPosts
+class PostAdapter(private var postsWithDistance: List<PostWithDistance>, private val onItemClick: (PostWithDistance) -> Unit) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+
+    fun updatePosts(newPostsWithDistance: List<PostWithDistance>) {
+        postsWithDistance = newPostsWithDistance
         notifyDataSetChanged()
     }
 
@@ -21,33 +26,36 @@ class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = posts[position]
-        holder.bind(post)
+        val item = postsWithDistance[position]
+        holder.bind(item)
     }
 
-    override fun getItemCount(): Int = posts.size
+    override fun getItemCount(): Int = postsWithDistance.size
 
     inner class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
-                val post = posts[adapterPosition]
-                onItemClick(post)
+                val item = postsWithDistance[adapterPosition]
+                onItemClick(item)
             }
         }
-        fun bind(post: Post) {
+        fun bind(item: PostWithDistance) {
+            val post = item.post
+
             // 게시글 속성을 화면에 표시
             binding.postTitle.text = post.title
             binding.postPrice.text = "${post.price} 원"
 
-            // region 맵에서 'dong' 값을 가져와서 위치로 표시
             val dongName = post.region["dong"] ?: ""
-            // uploadedAt 시간을 "N시간 전" 형식으로 변환하여 표시
+            val guName = post.region["district"] ?: ""
             val timeAgo = getTimeAgo(post.uploadedAt)
-            binding.postLocation.text = "$dongName • $timeAgo"
+
+            // 거리 정보를 포맷팅하여 표시할 TextView
+            val formattedDistance = String.format("%.1f", item.distance)
+            binding.postLocation.text = "$guName $dongName • $formattedDistance km • $timeAgo"
 
             binding.postCategory.text = post.category
 
-            // imageUrls 리스트의 첫 번째 이미지를 로드
             val firstImageUrl = post.imageUrls.firstOrNull()
             if (!firstImageUrl.isNullOrEmpty()) {
                 Glide.with(binding.postImage.context)
