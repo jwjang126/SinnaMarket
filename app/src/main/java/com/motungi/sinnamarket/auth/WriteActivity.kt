@@ -41,6 +41,7 @@ class WriteActivity : AppCompatActivity() {
     private var dong: String = ""
 
 
+
     private val imageUris = mutableListOf<Uri>()
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var photoRecyclerView: RecyclerView
@@ -84,6 +85,9 @@ class WriteActivity : AppCompatActivity() {
                 val selectedAddress = data?.getStringExtra("selectedAddress") ?: "주소 없음"
                 val district = data?.getStringExtra("district") ?: ""
                 val dong = data?.getStringExtra("dong") ?: ""
+
+                this.selectedLat = selectedLat
+                this.selectedLng = selectedLng
 
                 findViewById<TextView>(R.id.selectedAddress).text =
                     "$selectedAddress\n($district, $dong)"
@@ -193,6 +197,12 @@ class WriteActivity : AppCompatActivity() {
         if (currentUser == null) {
             Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
             return
+        }
+
+        // --- 위치 선택 여부 검증 ---
+        if (selectedLat == 0.0 && selectedLng == 0.0) {
+            Toast.makeText(this, "위치를 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return // 함수 종료
         }
 
         isUploading = true

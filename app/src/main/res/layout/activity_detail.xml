@@ -52,17 +52,32 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp" />
 
-        <TextView
-            android:id="@+id/detaillocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="희망 장소"
-            android:layout_marginTop="12dp"/>
+        <!-- 거래 위치 -->
         <TextView
             android:id="@+id/detailrelocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/detailadress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="거래 희망 주소"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/detailadress2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="주소 상세 설명"
+            android:layout_marginTop="10dp"/>
+
+        <com.naver.maps.map.MapView
+            android:layout_margin="5dp"
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
 
         <TextView
             android:id="@+id/detaildate"
