@@ -19,6 +19,7 @@ class MyInfoActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private lateinit var btnLogout: Button
     private lateinit var btnDeleteAccount: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,12 +28,16 @@ class MyInfoActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        btnLogout = findViewById(R.id.btnLogout)
         btnDeleteAccount = findViewById(R.id.btnDeleteAccount)
 
         loadUserInfo()
 
         btnDeleteAccount.setOnClickListener{
             showConfirmDialog()
+        }
+        btnLogout.setOnClickListener{
+            showLogoutDialog()
         }
     }
 
@@ -73,11 +78,29 @@ class MyInfoActivity : AppCompatActivity() {
             }
     }
 
+    //로그아웃
+    private fun showLogoutDialog(){
+        AlertDialog.Builder(this)
+            .setTitle("로그아웃")
+            .setMessage("로그아웃 하시겠습니까?")
+            .setPositiveButton("확인"){_, _ -> logout()}
+            .setNegativeButton("취소" ,null)
+            .show()
+    }
+
+    private fun logout(){
+        FirebaseAuth.getInstance().signOut()
+
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
     //회원 탈퇴
     private fun showConfirmDialog(){
         AlertDialog.Builder(this)
             .setTitle("회원 탈퇴")
-            .setMessage("정말로 탈퇴하시겠습니까?")
+            .setMessage("정말 탈퇴하시겠습니까?")
             .setPositiveButton("확인") {_, _ -> showPasswordDialog()}
             .setNegativeButton("취소", null)
             .show()

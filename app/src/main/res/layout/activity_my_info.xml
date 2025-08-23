@@ -55,12 +55,21 @@
         android:layout_marginBottom="8dp" />
 
     <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="로그아웃"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#97CD2D"
+        android:layout_marginTop="80dp"/>
+
+    <Button
         android:id="@+id/btnDeleteAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="탈퇴하기"
         android:textColor="#97CD2D"
         app:backgroundTint="#00000000"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

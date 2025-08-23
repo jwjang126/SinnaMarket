@@ -88,20 +88,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, WriteActivity::class.java)
             startActivity(intent)
         }
-
-        binding.logoutIcon.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-
-            val intent = Intent(this, LoginActivity::class.java).apply {
-                addFlags(
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                            Intent.FLAG_ACTIVITY_NEW_TASK or
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK
-                )
-            }
-            startActivity(intent)
-            finish()
-        }
     }
 
     private fun showMyInfo() {
