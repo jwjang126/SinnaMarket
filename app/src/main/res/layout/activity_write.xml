@@ -14,7 +14,8 @@
             android:id="@+id/itemNameInput"
             android:hint="상품명"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"/>
 
         <!-- 가격 -->
         <EditText
