@@ -43,6 +43,7 @@ dependencies {
     // 네이버 지도 SDK
     implementation("com.naver.maps:map-sdk:3.22.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // AndroidX
     implementation("androidx.core:core-ktx:1.12.0")
