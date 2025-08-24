@@ -53,7 +53,7 @@ class ChatroomActivity : AppCompatActivity() {
     }
 
     private fun listenMessages() {
-        db.collection("chatRooms")
+        db.collection("chats")
             .document(chatRoomId!!)
             .collection("messages")
             .orderBy("timestamp")
