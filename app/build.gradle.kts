@@ -56,14 +56,13 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
-    implementation("androidx.activity:activity-ktx:1.8.2")
 
+    // 사진 Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
     // Test
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    kapt ("com.github.bumptech.glide:compiler:4.16.0")
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.SetOptions
 import com.motungi.sinnamarket.R
 import com.motungi.sinnamarket.auth.PhotoAdapter
 import com.naver.maps.geometry.LatLng
@@ -81,8 +82,9 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 val itemName = doc.getString("title") ?: ""
                 val itemDesc = doc.getString("description") ?: ""
-                //파베에 아직 날짜가 안올라가서 생기는 문제...일단 price로
-                //val date = doc.getLong("price") ?: 0
+                val year = doc.getLong("date.year") ?: 0
+                val month = doc.getLong("date.month") ?: 0
+                val day = doc.getLong("date.day") ?: 0
                 val district = doc.getString("region.district") ?: ""
                 val dong = doc.getString("region.dong") ?: ""
                 val itemPrice = doc.getLong("price") ?: 0
@@ -120,7 +122,7 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
                 else{
                     findViewById<TextView>(R.id.detailrelocation).text = "위치 조율 불가능"
                 }
-                //findViewById<TextView>(R.id.detaildate).text = "$date 원"
+                findViewById<TextView>(R.id.detaildate).text = "$year 년 $month 월 $day 일"
                 findViewById<TextView>(R.id.detailadress2).text = detailedDesc
 
 
@@ -185,50 +187,50 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun listenVoteOptions(productId: String) {
         voteListener?.remove() // 기존 리스너 제거
-        voteListener = db.collection("product").document(productId)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+        val voteOptionsRef = db.collection("product").document(productId).collection("voteOptions")
+        voteListener = voteOptionsRef.addSnapshotListener { snapshot, error ->
+            if (error != null || snapshot == null) return@addSnapshotListener
+                    voteOptionsContainer.removeAllViews()
+            for (optionDoc in snapshot.documents) {
+                val optionId = optionDoc.id
+                val timeStr = optionDoc.getString("time") ?: ""
 
-                val voteOptions = snapshot.get("voteOptions") as? List<Map<String, Any>> ?: listOf()
-                voteOptionsContainer.removeAllViews()
+                val inflater = LayoutInflater.from(this)
+                val optionLayout = inflater.inflate(R.layout.vote_option_item, voteOptionsContainer, false)
+                val timeText = optionLayout.findViewById<TextView>(R.id.voteTimeText)
+                val voteButton = optionLayout.findViewById<Button>(R.id.voteButton)
+                val qtyInput = optionLayout.findViewById<EditText>(R.id.voteQuantityInput)
+                val voteCountText = optionLayout.findViewById<TextView>(R.id.voteCountText)
 
-                for ((index, option) in voteOptions.withIndex()) {
-                    val timeStr = option["time"] as? String ?: ""
-                    val voters = option["voters"] as? List<String> ?: listOf()
+                timeText.text = timeStr
 
-                    val inflater = LayoutInflater.from(this)
-                    val optionLayout =
-                        inflater.inflate(R.layout.vote_option_item, voteOptionsContainer, false)
-                    val timeText = optionLayout.findViewById<TextView>(R.id.voteTimeText)
-                    val voteButton = optionLayout.findViewById<Button>(R.id.voteButton)
-                    val qtyInput = optionLayout.findViewById<EditText>(R.id.voteQuantityInput)
-                    val voteCountText = optionLayout.findViewById<TextView>(R.id.voteCountText)
-
-                    timeText.text = timeStr
-                    voteCountText.text = "투표 수: ${voters.size}"
-
-                    val userId = currentUser?.uid
-                    voteButton.isEnabled = userId != null && !voters.contains(userId)
-
-                    voteButton.setOnClickListener {
-                        val qty = qtyInput.text.toString().toIntOrNull() ?: 1
-                        val updatedVoters = voters.toMutableList()
-                        repeat(qty) { userId?.let { updatedVoters.add(it) } }
-
-                        db.collection("product").document(productId)
-                            .update("voteOptions.$index.voters", updatedVoters)
-                            .addOnSuccessListener {
-                                Toast.makeText(this, "투표 완료", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(this, "투표 실패", Toast.LENGTH_SHORT).show()
-                            }
+                // 하위 컬렉션 voters 실시간 구독
+                val votersRef = voteOptionsRef.document(optionId).collection("voters")
+                votersRef.addSnapshotListener { votersSnap, _ ->
+                    var totalVotes = 0
+                    for (voterDoc in votersSnap?.documents ?: listOf()) {
+                        totalVotes += voterDoc.getLong("qty")?.toInt() ?: 0
                     }
-
-                    voteOptionsContainer.addView(optionLayout)
+                    voteCountText.text = "투표 수: $totalVotes"
                 }
+
+                val userId = currentUser?.uid
+                voteButton.isEnabled = userId != null
+
+                voteButton.setOnClickListener {
+                    val qty = qtyInput.text.toString().toIntOrNull() ?: 1
+                    userId?.let {
+                        votersRef.document(it)
+                            .set(mapOf("qty" to qty), SetOptions.merge())
+                            .addOnSuccessListener { Toast.makeText(this, "투표 완료", Toast.LENGTH_SHORT).show() }
+                            .addOnFailureListener { Toast.makeText(this, "투표 실패", Toast.LENGTH_SHORT).show() }
+                    }
+                }
+
+                voteOptionsContainer.addView(optionLayout)
             }
     }
+}
 
     override fun onDestroy() {
         super.onDestroy()

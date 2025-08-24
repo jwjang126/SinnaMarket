@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.motungi.sinnamarket.R
 
 class PhotoAdapter(private var photos:List<Uri>) :
@@ -21,7 +22,9 @@ class PhotoAdapter(private var photos:List<Uri>) :
         return PhotoViewHolder(view)
     }
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.imageView.setImageURI(photos[position])
+        Glide.with(holder.imageView.context)
+            .load(photos[position]) // URL 문자열로 로드
+            .into(holder.imageView)
     }
 
     override fun getItemCount(): Int = photos.size

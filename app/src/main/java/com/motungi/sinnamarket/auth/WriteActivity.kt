@@ -283,6 +283,11 @@ class WriteActivity : AppCompatActivity() {
         val storageRef = FirebaseStorage.getInstance().reference
         val imageUrls = mutableListOf<String>()
 
+        val selectedYear = findViewById<Spinner>(R.id.yearSpinner).selectedItem.toString().replace("년","").toIntOrNull() ?: 2025
+        val selectedMonth = findViewById<Spinner>(R.id.monthSpinner).selectedItem.toString().replace("월","").toIntOrNull() ?: 1
+        val selectedDay = findViewById<Spinner>(R.id.daySpinner).selectedItem.toString().replace("일","").toIntOrNull() ?: 1
+
+
         val data = hashMapOf(
             "title" to itemName,
             "description" to itemDesc,
@@ -294,8 +299,10 @@ class WriteActivity : AppCompatActivity() {
             "region" to hashMapOf("district" to district, "dong" to dong),
             "location" to hashMapOf("lat" to lat, "lng" to lng, "desc" to selectedLocationDesc),
             "imageUrls" to imageUrls,
-            "voteOptions" to voteOptions,
-            "uploadedAt" to System.currentTimeMillis()
+            //"voteOptions" to voteOptions,
+            "uploadedAt" to System.currentTimeMillis(),
+            "state" to false,
+            "date" to hashMapOf("year" to selectedYear, "month" to selectedMonth, "day" to selectedDay)
         )
 
         // 1️⃣ Firestore 문서 먼저 생성
@@ -304,6 +311,11 @@ class WriteActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 // 2️⃣ 이미지 업로드
                 uploadImagesToStorage(docRef.id, 0, imageUrls, storageRef, db)
+                //투표 넣기
+                val voteOptionsRef = docRef.collection("voteOptions")
+                for (option in voteOptions) {
+                    voteOptionsRef.add(mapOf("time" to option["time"]))
+                }
             }
             .addOnFailureListener {
                 Toast.makeText(this, "상품 등록 실패: ${it.message}", Toast.LENGTH_SHORT).show()
