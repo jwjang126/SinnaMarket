@@ -12,8 +12,10 @@ import com.motungi.sinnamarket.R
 
 data class ChatMessage(
     val senderId: String = "",
-    val text: String = ""
+    val text: String = "",
+    val timestamp: Long = 0
 )
+
 class ChatroomActivity : AppCompatActivity() {
 
     private lateinit var chatRecyclerView: RecyclerView
@@ -34,9 +36,11 @@ class ChatroomActivity : AppCompatActivity() {
         messageInput = findViewById(R.id.messageInput)
         sendBtn = findViewById(R.id.sendBtn)
 
-        chatAdapter = ChatAdapter(messages)
+        chatAdapter = ChatAdapter(messages, currentUser!!.uid)
         chatRecyclerView.adapter = chatAdapter
-        chatRecyclerView.layoutManager = LinearLayoutManager(this)
+        chatRecyclerView.layoutManager = LinearLayoutManager(this).apply {
+            stackFromEnd = true
+        }
 
         chatRoomId = intent.getStringExtra("chatRoomId")
         if (chatRoomId == null) finish() // chatRoomId 없으면 종료
@@ -64,7 +68,8 @@ class ChatroomActivity : AppCompatActivity() {
                 for (doc in snapshot.documents) {
                     val text = doc.getString("text") ?: ""
                     val senderId = doc.getString("senderId") ?: ""
-                    messages.add(ChatMessage(senderId, text))
+                    val timestamp = doc.getLong("timestamp") ?: 0
+                    messages.add(ChatMessage(senderId, text, timestamp))
                 }
                 chatAdapter.notifyDataSetChanged()
                 chatRecyclerView.scrollToPosition(messages.size - 1)
@@ -77,7 +82,7 @@ class ChatroomActivity : AppCompatActivity() {
             "senderId" to currentUser!!.uid,
             "timestamp" to System.currentTimeMillis()
         )
-        db.collection("chatRooms")
+        db.collection("chats")
             .document(chatRoomId!!)
             .collection("messages")
             .add(messageData)
