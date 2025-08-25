@@ -46,13 +46,20 @@ class PostAdapter(private var postsWithDistance: List<PostWithDistance>, private
             binding.postTitle.text = post.title
             binding.postPrice.text = "${post.price} 원"
 
+            val distance = item.distance
+            val distanceText = if (distance < 1.0) {
+                val distanceInMeters = distance * 1000
+                String.format("• %.0f m", distanceInMeters)
+            } else {
+                String.format("• %.1f km", distance)
+            }
+
             val dongName = post.region["dong"] ?: ""
             val guName = post.region["district"] ?: ""
             val timeAgo = getTimeAgo(post.uploadedAt)
 
-            // 거리 정보를 포맷팅하여 표시할 TextView
-            val formattedDistance = String.format("%.1f", item.distance)
-            binding.postLocation.text = "$guName $dongName • $formattedDistance km • $timeAgo"
+            // 위치 및 거리 정보 표시
+            binding.postLocation.text = "$guName $dongName $distanceText • $timeAgo"
 
             binding.postCategory.text = post.category
 

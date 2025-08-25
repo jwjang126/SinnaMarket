@@ -63,7 +63,19 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val distance = intent.getDoubleExtra("distance", -1.0)
         val distanceTextView = findViewById<TextView>(R.id.detaildistance)
-        distanceTextView.text = if (distance >= 0) String.format("•  %.1f km", distance) else "거리 정보 없음"
+
+        distanceTextView.text = if (distance >= 0) {
+            if (distance < 1.0) {
+                // 거리가 1km 미만일 경우 미터(m)로 변환
+                val distanceInMeters = distance * 1000
+                String.format("현재 위치에서 %.0f m", distanceInMeters)
+            } else {
+                // 거리가 1km 이상일 경우 킬로미터(km)로 표시
+                String.format("현재 위치에서 %.1f km", distance)
+            }
+        } else {
+            "거리 정보 없음"
+        }
 
         mapView = findViewById(R.id.map_view)
         mapView.onCreate(savedInstanceState)

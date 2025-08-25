@@ -1,13 +1,20 @@
 package com.motungi.sinnamarket.main
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.motungi.sinnamarket.databinding.FragmentPostListBinding
@@ -24,12 +31,20 @@ class PostListFragment : Fragment() {
     private var regionName: String? = null
     private lateinit var postAdapter: PostAdapter
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var userLat: Double = 0.0
+    private var userLng: Double = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             categoryName = it.getString(ARG_CATEGORY_NAME)
             regionName = it.getString(ARG_REGION_NAME)
         }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        // 위치 권한 요청
+        requestLocationPermission()
     }
 
     override fun onCreateView(
@@ -61,9 +76,6 @@ class PostListFragment : Fragment() {
         listenForPosts()
     }
 
-    /**
-     * 외부에서 새로운 지역 정보를 받아서 데이터를 새로고침하는 함수
-     */
     fun updateRegion(newRegion: String) {
         if (this.regionName != newRegion) {
             this.regionName = newRegion
@@ -95,11 +107,11 @@ class PostListFragment : Fragment() {
                             val lat = (it.location["lat"] ?: 0.0) as Double
                             val lng = (it.location["lng"] ?: 0.0) as Double
 
-                            // test
-                            val userLat = 35.888   // 경북대 근처 위도
-                            val userLng = 128.610  // 경북대 근처 경도
-
-                            val distance = calculateDistance(userLat, userLng, lat, lng)
+                            val distance = if (userLat != 0.0 && userLng != 0.0) {
+                                calculateDistance(userLat, userLng, lat, lng)
+                            } else {
+                                0.0
+                            }
                             PostWithDistance(it, distance)
                         }
                     }
@@ -118,22 +130,62 @@ class PostListFragment : Fragment() {
             }
     }
 
-    private fun calculateDistance(
-        userLat: Double,
-        userLng: Double,
-        postLat: Double,
-        postLng: Double
-    ): Double {
-        val earthRadius = 6371.0 // km
-        val dLat = Math.toRadians(postLat - userLat)
-        val dLng = Math.toRadians(postLng - userLng)
+    private fun requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            getUserLocation()
+        }
+    }
 
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(postLat)) *
-                Math.sin(dLng / 2) * Math.sin(dLng / 2)
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                getUserLocation()
+            } else {
+                // 사용자가 권한을 거부한 경우 처리
+                Log.d("PostListFragment", "위치 권한이 거부되었습니다.")
+                // 권한이 없으므로 userLat, userLng는 0.0으로 유지됩니다.
+                // 이 상태로 listenForPosts()를 호출하면 거리는 계산되지 않습니다.
+                listenForPosts()
+            }
+        }
 
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return earthRadius * c // km 단위 결과 반환
+    private fun getUserLocation() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    userLat = location.latitude
+                    userLng = location.longitude
+                    // 위치를 가져온 후 게시글 목록을 다시 로드하여 거리를 업데이트
+                    listenForPosts()
+                } else {
+                    Log.d("PostListFragment", "위치를 가져올 수 없습니다.")
+                }
+            }
+        }
+    }
+
+    private fun calculateDistance(userLat: Double, userLng: Double, postLat: Double, postLng: Double): Double {
+        val userLocation = Location("user").apply {
+            latitude = userLat
+            longitude = userLng
+        }
+        val postLocation = Location("post").apply {
+            latitude = postLat
+            longitude = postLng
+        }
+
+        val distanceInMeters = userLocation.distanceTo(postLocation)
+        return distanceInMeters / 1000.0 // km 단위로 반환
     }
 
 
