@@ -37,7 +37,8 @@ class SignUpActivity : AppCompatActivity() {
 
         // 1. 구 리스트
         val districtList = listOf("선택하세요", "중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군", "군위군")
-        val districtAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, districtList)
+        val districtAdapter =
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, districtList)
         spinnerDistrict.adapter = districtAdapter
 
 // 2. 구-동 매핑
@@ -55,10 +56,19 @@ class SignUpActivity : AppCompatActivity() {
 
 // 3. 구 선택 시 해당 동 리스트 적용
         spinnerDistrict.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedDistrict = districtList[position]
                 val dongList = dongMap[selectedDistrict] ?: listOf("선택하세요")
-                val dongAdapter = ArrayAdapter(this@SignUpActivity, android.R.layout.simple_spinner_dropdown_item, dongList)
+                val dongAdapter = ArrayAdapter(
+                    this@SignUpActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    dongList
+                )
                 spinnerDong.adapter = dongAdapter
             }
 
@@ -84,12 +94,40 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // 닉네임 중복 검사
+            // 영구 차단
+            db.collection("banned_list")
+                .whereEqualTo("phonenumber", phonenumber)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        Toast.makeText(this, "영구 탈퇴되어 회원가입할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // 차단되지 않았으면 닉네임 중복 검사 로직 실행
+                        checkNicknameAndSignUp(name, phonenumber, email, password, nickname, region)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // 차단 목록 쿼리가 실패해도 회원가입 진행
+                    Log.e("SignUp", "차단 목록 확인 중 오류: ${e.message}, 회원가입은 계속 진행합니다.")
+                    checkNicknameAndSignUp(name, phonenumber, email, password, nickname, region)
+                }
+        }
+    }
+
+        // 닉네임 중복 검사 및 회원가입 로직을 별도의 함수로 분리
+        private fun checkNicknameAndSignUp(
+            name: String,
+            phonenumber: String,
+            email: String,
+            password: String,
+            nickname: String,
+            region: Map<String, String>
+        ) {
             db.collection("users")
                 .whereEqualTo("nickname", nickname)
                 .get()
-                .addOnSuccessListener { documents ->
-                    if (documents != null && !documents.isEmpty) {
+                .addOnSuccessListener { docs ->
+                    if (!docs.isEmpty) {
                         Toast.makeText(this, "이미 사용 중인 닉네임입니다.", Toast.LENGTH_SHORT).show()
                     } else {
                         // 닉네임이 중복되지 않으면 회원가입 진행
@@ -97,12 +135,9 @@ class SignUpActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener { e ->
-                    // 첫 가입 시도 시 컬렉션이 없어도 여기로 빠질 수 있음
-                    // 그냥 닉네임 중복 없음으로 처리하고 진행
                     createAccountAndSaveUser(name, phonenumber, email, password, nickname, region)
                 }
         }
-    }
 
     private fun createAccountAndSaveUser(
         name: String,
