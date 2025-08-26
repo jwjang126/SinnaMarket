@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +38,7 @@ class WriteActivity : AppCompatActivity() {
         "달성군" to listOf("선택하세요", "화원읍", "논공읍", "다사읍", "유가읍", "옥포읍", "현풍읍", "가창면", "하빈면", "구지면"),
         "군위군" to listOf("선택하세요", "군위읍", "소보면", "효령면", "부계면", "우보면", "의흥면", "산성면", "삼국유사면")
     )
+    private var selectedAddress: String = ""
     private var district: String = ""
     private var dong: String = ""
 
@@ -86,14 +88,14 @@ class WriteActivity : AppCompatActivity() {
                 val district = data?.getStringExtra("district") ?: ""
                 val dong = data?.getStringExtra("dong") ?: ""
 
+                this.selectedAddress = data?.getStringExtra("selectedAddress") ?: "주소 없음"
                 this.selectedLat = selectedLat
                 this.selectedLng = selectedLng
 
-                findViewById<TextView>(R.id.selectedAddress).text =
-                    "$selectedAddress\n($district, $dong)"
-
                 this.district = district
                 this.dong = dong
+
+                updateAddressUI()
 
                 val dialogView = layoutInflater.inflate(R.layout.dialog_input_location, null)
                 val editText = dialogView.findViewById<TextInputEditText>(R.id.editLocationDesc)
@@ -171,21 +173,58 @@ class WriteActivity : AppCompatActivity() {
         for (spinner in hourSpinners) spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, hour)
         for (spinner in minSpinners) spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, min)
 
-        // --- 지역 선택 ---
-        /* districtSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                val selectedDistrict = parent?.getItemAtPosition(position).toString()
-                val dongList = districtMap[selectedDistrict] ?: listOf("선택하세요")
-                dongSpinner.adapter = ArrayAdapter(this@WriteActivity, android.R.layout.simple_spinner_dropdown_item, dongList)
-            }
+        val tvDistrict = findViewById<TextView>(R.id.tvDistrict)
+        val spinnerDong = findViewById<Spinner>(R.id.spinnerDong)
+        val tvSelectedAddress = findViewById<TextView>(R.id.selectedAddress)
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        } */
+        updateAddressUI()
 
         findViewById<Button>(R.id.openMap).setOnClickListener {
             pickMapLauncher.launch(Intent(this, MapSelectActivity::class.java))
         }
     }
+
+    private fun updateAddressUI() {
+        val tvDistrict = findViewById<TextView>(R.id.tvDistrict)
+        val spinnerDong = findViewById<Spinner>(R.id.spinnerDong)
+        val tvSelectedAddress = findViewById<TextView>(R.id.selectedAddress)
+
+        tvDistrict.text = district
+        tvSelectedAddress.text = selectedAddress
+        spinnerDong.visibility = View.GONE
+        tvDistrict.visibility = View.GONE
+
+        if (dong.isEmpty()) {
+            // dong 없음 → 사용자에게 선택 요구
+            spinnerDong.visibility = View.VISIBLE
+            tvDistrict.visibility = View.VISIBLE
+
+            val dongList = districtMap[district] ?: listOf("선택하세요")
+            val adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                dongList
+            )
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerDong.adapter = adapter
+
+            spinnerDong.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedDong = dongList[position]
+                    if (selectedDong != "선택하세요") {
+                        dong = selectedDong
+                    }
+                }
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+        }
+    }
+
 
     private fun submitItem() {
         if (isUploading) {

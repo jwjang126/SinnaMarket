@@ -91,15 +91,6 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (parts[i].endsWith("동") || parts[i].endsWith("읍") || parts[i].endsWith("면")) {
                         dong = parts[i]
                     }
-
-                    val dongOrRo = parts.find {
-                        it.endsWith("동") || it.endsWith("로") || it.endsWith("가") || it.endsWith("길") || it.endsWith("읍") || it.endsWith("면")
-                    }
-
-                    if (dongOrRo != null) {
-                        // 숫자가 나올 때까지의 문자열만 추출
-                        dong = dongOrRo.takeWhile { !it.isDigit() }
-                    }
                 }
 
                 if (district.isEmpty()) {
@@ -112,6 +103,7 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 Triple(fullAddress, district, dong)
+
             } else {
                 Triple("주소 미상", "", "")
             }
