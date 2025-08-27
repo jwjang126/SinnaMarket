@@ -43,7 +43,6 @@ class PostListFragment : Fragment() {
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        // 위치 권한 요청
         requestLocationPermission()
     }
 
@@ -58,7 +57,6 @@ class PostListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // PostAdapter 초기화 시 클릭 리스너에서 post.id를 사용하도록 수정
         postAdapter = PostAdapter(emptyList()) { postWithDistance ->
             val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("productId", postWithDistance.post.id)
@@ -69,8 +67,6 @@ class PostListFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = postAdapter
 
-        // tvNoPosts는 View Binding으로 접근하므로 별도의 선언이 필요 없습니다.
-        // 초기에는 보이지 않도록 설정
         binding.tvNoPosts.visibility = View.GONE
 
         listenForPosts()
@@ -79,7 +75,7 @@ class PostListFragment : Fragment() {
     fun updateRegion(newRegion: String) {
         if (this.regionName != newRegion) {
             this.regionName = newRegion
-            listenForPosts() // 지역이 바뀌면 Firebase 쿼리를 다시 실행합니다.
+            listenForPosts()
         }
     }
 
@@ -90,6 +86,7 @@ class PostListFragment : Fragment() {
         }
 
         val db = FirebaseFirestore.getInstance()
+
         db.collection("product")
             .whereEqualTo("category", categoryName)
             .whereEqualTo("region.dong", regionName)
@@ -147,10 +144,7 @@ class PostListFragment : Fragment() {
             if (isGranted) {
                 getUserLocation()
             } else {
-                // 사용자가 권한을 거부한 경우 처리
                 Log.d("PostListFragment", "위치 권한이 거부되었습니다.")
-                // 권한이 없으므로 userLat, userLng는 0.0으로 유지됩니다.
-                // 이 상태로 listenForPosts()를 호출하면 거리는 계산되지 않습니다.
                 listenForPosts()
             }
         }
@@ -165,7 +159,6 @@ class PostListFragment : Fragment() {
                 if (location != null) {
                     userLat = location.latitude
                     userLng = location.longitude
-                    // 위치를 가져온 후 게시글 목록을 다시 로드하여 거리를 업데이트
                     listenForPosts()
                 } else {
                     Log.d("PostListFragment", "위치를 가져올 수 없습니다.")

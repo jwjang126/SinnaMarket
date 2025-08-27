@@ -1,7 +1,6 @@
 package com.motungi.sinnamarket.auth
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -41,8 +40,6 @@ class WriteActivity : AppCompatActivity() {
     private var selectedAddress: String = ""
     private var district: String = ""
     private var dong: String = ""
-
-
 
     private val imageUris = mutableListOf<Uri>()
     private lateinit var photoAdapter: PhotoAdapter
@@ -338,7 +335,7 @@ class WriteActivity : AppCompatActivity() {
             "region" to hashMapOf("district" to district, "dong" to dong),
             "location" to hashMapOf("lat" to lat, "lng" to lng, "desc" to selectedLocationDesc),
             "imageUrls" to imageUrls,
-            //"voteOptions" to voteOptions,
+            "voteOptions" to voteOptions,
             "uploadedAt" to System.currentTimeMillis(),
             "state" to false,
             "date" to hashMapOf("year" to selectedYear, "month" to selectedMonth, "day" to selectedDay)

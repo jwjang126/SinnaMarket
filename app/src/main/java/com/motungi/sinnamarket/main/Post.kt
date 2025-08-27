@@ -1,7 +1,7 @@
 package com.motungi.sinnamarket.main
 
 import com.google.firebase.firestore.Exclude
-import com.google.firebase.firestore.ServerTimestamp
+import com.google.firebase.firestore.PropertyName
 import java.util.*
 
 data class Post(
@@ -14,7 +14,6 @@ data class Post(
     val region: Map<String, String> = mapOf(),
     val title: String = "",
     val uploadedAt: Long = 0L,
-    val voteOptions: List<VoteOption> = emptyList(),
     @get:Exclude
     var id: String = "" // Firestore 문서 ID를 저장할 필드 추가 (DB에 저장되지 않음)
 )

@@ -11,6 +11,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.motungi.sinnamarket.R
@@ -41,7 +42,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // SharedPreferences에서 마지막으로 설정된 지역 정보를 불러옵니다.
+        binding.fabWrite.bringToFront()
+
         val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         selectedRegion = prefs.getString("selected_region", "수성구") ?: "수성구"
         binding.regionText.text = selectedRegion
@@ -54,6 +56,24 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = categories[position]
         }.attach()
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (!query.isNullOrBlank()) {
+                    val intent = Intent(this@MainActivity, SearchActivity::class.java)
+                    intent.putExtra("search_query", query)
+                    startActivity(intent)
+                    hideSearchAndKeyboard()
+                } else {
+                    Toast.makeText(this@MainActivity, "검색어를 입력하세요.", Toast.LENGTH_SHORT).show()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
 
         binding.bottomNavigationBar.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -79,9 +99,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.searchIcon.setOnClickListener {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-            Toast.makeText(this, "키보드가 열립니다.", Toast.LENGTH_SHORT).show()
+            if (binding.searchView.visibility == View.GONE) {
+                binding.searchView.visibility = View.VISIBLE
+                binding.searchView.requestFocus()
+                showKeyboard()
+            } else {
+                hideSearchAndKeyboard()
+            }
         }
 
         binding.fabWrite.setOnClickListener {
@@ -91,7 +115,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMyInfo() {
-        // Toast 메시지를 보여주는 대신 MyInfoActivity로 이동
         val intent = Intent(this, MyInfoActivity::class.java)
         startActivity(intent)
     }
@@ -122,11 +145,9 @@ class MainActivity : AppCompatActivity() {
                     binding.regionText.text = selectedDong
                     selectedRegion = selectedDong
 
-                    // SharedPreferences에 지역 정보 저장
                     val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                     prefs.edit().putString("selected_region", selectedDong).apply()
 
-                    // ViewPagerAdapter를 통해 모든 Fragment 업데이트
                     viewPagerAdapter.updateRegion(selectedDong)
 
                     Toast.makeText(this, "$selectedDong 로 지역이 변경되었습니다.", Toast.LENGTH_SHORT).show()
@@ -139,5 +160,31 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun performSearch(query: String?) {
+        if (query.isNullOrBlank()) {
+            Toast.makeText(this, "검색어를 입력하세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val intent = Intent(this, SearchActivity::class.java)
+        intent.putExtra("search_query", query)
+        startActivity(intent)
+    }
+
+    private fun hideSearchAndKeyboard() {
+        binding.searchView.visibility = View.GONE
+        hideKeyboard()
+        binding.searchView.setQuery("", false)
+    }
+
+    private fun showKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.searchView, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
     }
 }

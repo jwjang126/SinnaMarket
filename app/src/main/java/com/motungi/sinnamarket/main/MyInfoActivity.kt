@@ -3,12 +3,14 @@ package com.motungi.sinnamarket.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,6 +28,9 @@ class MyInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_info)
 
+        // 툴바 대신 하단 바 사용
+        supportActionBar?.hide()
+
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
         btnLogout = findViewById(R.id.btnLogout)
@@ -33,11 +38,37 @@ class MyInfoActivity : AppCompatActivity() {
 
         loadUserInfo()
 
-        btnDeleteAccount.setOnClickListener{
+        btnDeleteAccount.setOnClickListener {
             showConfirmDialog()
         }
-        btnLogout.setOnClickListener{
+        btnLogout.setOnClickListener {
             showLogoutDialog()
+        }
+
+        // 하단 바 리스너 설정
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
+        bottomNavigationView.selectedItemId = R.id.nav_my_info
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        putExtra("selected_tab", R.id.nav_home)
+                    })
+                    true
+                }
+                R.id.nav_chat -> {
+                    startActivity(Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        putExtra("selected_tab", R.id.nav_chat)
+                    })
+                    true
+                }
+                R.id.nav_my_info -> {
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -55,8 +86,8 @@ class MyInfoActivity : AppCompatActivity() {
                 if (document != null && document.exists()) {
                     val nickname = document.getString("nickname") ?: "닉네임 없음"
                     val email = document.getString("email") ?: "이메일 없음"
-                    val phonenumber = document.getString("phonenumber") ?: "전화번호 없음" // 추가된 부분
-                    val rating = document.getDouble("rating") ?: 0.0 // 추가된 부분
+                    val phonenumber = document.getString("phonenumber") ?: "전화번호 없음"
+                    val rating = document.getDouble("rating") ?: 0.0
 
                     val regionMap = document.get("region") as? Map<String, String>
                     val district = regionMap?.get("district") ?: "지역 정보 없음"
@@ -65,9 +96,9 @@ class MyInfoActivity : AppCompatActivity() {
 
                     findViewById<TextView>(R.id.tvNickname).text = "닉네임: $nickname"
                     findViewById<TextView>(R.id.tvEmail).text = "이메일: $email"
-                    findViewById<TextView>(R.id.tvPhonenumber).text = "전화번호: $phonenumber" // 추가된 부분
+                    findViewById<TextView>(R.id.tvPhonenumber).text = "전화번호: $phonenumber"
                     findViewById<TextView>(R.id.tvRegion).text = "지역: $region"
-                    findViewById<TextView>(R.id.tvRating).text = "평점: $rating" // 추가된 부분
+                    findViewById<TextView>(R.id.tvRating).text = "평점: $rating"
                 } else {
                     Toast.makeText(this, "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -78,47 +109,43 @@ class MyInfoActivity : AppCompatActivity() {
             }
     }
 
-    //로그아웃
-    private fun showLogoutDialog(){
+    private fun showLogoutDialog() {
         AlertDialog.Builder(this)
             .setTitle("로그아웃")
             .setMessage("로그아웃 하시겠습니까?")
-            .setPositiveButton("확인"){_, _ -> logout()}
-            .setNegativeButton("취소" ,null)
+            .setPositiveButton("확인") { _, _ -> logout() }
+            .setNegativeButton("취소", null)
             .show()
     }
 
-    private fun logout(){
+    private fun logout() {
         FirebaseAuth.getInstance().signOut()
-
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
-    //회원 탈퇴
-    private fun showConfirmDialog(){
+    private fun showConfirmDialog() {
         AlertDialog.Builder(this)
             .setTitle("회원 탈퇴")
             .setMessage("정말 탈퇴하시겠습니까?")
-            .setPositiveButton("확인") {_, _ -> showPasswordDialog()}
+            .setPositiveButton("확인") { _, _ -> showPasswordDialog() }
             .setNegativeButton("취소", null)
             .show()
     }
 
     private fun showPasswordDialog() {
-        val input = EditText(this).apply{
+        val input = EditText(this).apply {
             hint = "비밀번호 입력"
         }
         AlertDialog.Builder(this)
             .setTitle("비밀번호 확인")
             .setView(input)
-            .setPositiveButton("확인"){_, _ ->
+            .setPositiveButton("확인") { _, _ ->
                 val password = input.text.toString()
-                if(password.isNotEmpty()){
+                if (password.isNotEmpty()) {
                     reAuthenticateAndDelete(password)
-                }
-                else{
+                } else {
                     showError("비밀번호를 입력해주세요.")
                 }
             }
@@ -126,13 +153,11 @@ class MyInfoActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun reAuthenticateAndDelete(password: String){
+    private fun reAuthenticateAndDelete(password: String) {
         val user = auth.currentUser
         val email = user?.email
-
-        if(user != null && email !=null){
+        if (user != null && email != null) {
             val credential = EmailAuthProvider.getCredential(email, password)
-
             user.reauthenticate(credential)
                 .addOnSuccessListener {
                     val uid = user.uid
@@ -144,23 +169,23 @@ class MyInfoActivity : AppCompatActivity() {
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(intent)
                                 }
-                                .addOnFailureListener{e->
+                                .addOnFailureListener { e ->
                                     showError("계정 삭제 실패")
                                 }
                         }
-                        .addOnFailureListener{e->
+                        .addOnFailureListener { e ->
                             showError("데이터 삭제 실패")
                         }
                 }
-                .addOnFailureListener{e->
+                .addOnFailureListener { e ->
                     showError("비밀번호가 올바르지 않습니다")
                 }
+        } else {
+            showError("로그인된 사용자가 없습니다")
         }
-    else{
-        showError("로그인된 사용자가 없습니다")
     }
-}
-    private fun showError(msg:String){
+
+    private fun showError(msg: String) {
         AlertDialog.Builder(this)
             .setTitle("오류")
             .setMessage(msg)

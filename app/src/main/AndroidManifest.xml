@@ -55,6 +55,10 @@
         <activity
             android:name=".main.MyInfoActivity"
             android:exported="false" />
+        <activity
+            android:name=".main.SearchActivity"
+            android:exported="false"
+            android:parentActivityName=".main.MainActivity" />
     </application>
 
 </manifest>
