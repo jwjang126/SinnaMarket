@@ -93,6 +93,29 @@ class MapSelectActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 }
 
+                if (dong.isEmpty()) {
+                    for (part in parts) {
+                        if (part.endsWith("가")) {
+                            // "동인동3가" → "동인동" 추출
+                            val match = Regex(".*동").find(part)
+                            if (match != null) {
+                                dong = match.value
+                                break
+                            }
+                            val matchEup = Regex(".*읍").find(part)
+                            if (matchEup != null) {
+                                dong = matchEup.value
+                                break
+                            }
+                            val matchMyeon = Regex(".*면").find(part)
+                            if (matchMyeon != null) {
+                                dong = matchMyeon.value
+                                break
+                            }
+                        }
+                    }
+                }
+
                 if (district.isEmpty()) {
                     for (i in parts.indices) {
                         if (parts[i].endsWith("시")) {
