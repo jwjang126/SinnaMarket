@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/nickname_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="'닉네임'님과 나눔이 어땠나요?"
+        android:textSize="18dp"
+        android:layout_marginTop="50dp"/>
+
+    <RatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:numStars="5"
+        android:stepSize="0.5" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:hint="의견을 남겨주세요 (예: 친절해요)"
+        android:inputType="text"
+        android:maxLength="50"/>
+
+</LinearLayout>
+
