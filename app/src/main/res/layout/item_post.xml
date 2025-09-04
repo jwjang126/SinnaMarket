@@ -20,6 +20,20 @@
         tools:src="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/post_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="모집 완료"
+        android:textColor="@android:color/white"
+        android:background="#97CD2D"
+        android:padding="4dp"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/post_image"
+        app:layout_constraintStart_toStartOf="@id/post_image" />
+
+
+    <TextView
         android:id="@+id/post_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -64,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/post_image"

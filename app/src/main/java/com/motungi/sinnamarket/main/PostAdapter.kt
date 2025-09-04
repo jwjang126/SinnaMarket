@@ -7,6 +7,8 @@ import com.bumptech.glide.Glide
 import com.motungi.sinnamarket.R
 import com.motungi.sinnamarket.databinding.ItemPostBinding
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
+import android.view.View
 
 data class PostWithDistance(
     val post: Post,
@@ -71,6 +73,13 @@ class PostAdapter(private var postsWithDistance: List<PostWithDistance>, private
                     .into(binding.postImage)
             } else {
                 binding.postImage.setImageResource(R.drawable.ic_launcher_background)
+            }
+
+            // post.state가 true면 '모집 완료' 텍스트를 보이도록 설정
+            if (post.state) {
+                binding.postState.visibility = View.VISIBLE
+            } else {
+                binding.postState.visibility = View.GONE
             }
         }
 
