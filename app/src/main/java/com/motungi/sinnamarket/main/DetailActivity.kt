@@ -123,6 +123,9 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
                 findViewById<TextView>(R.id.detaildate).text = "작성일: $year 년 $month 월 $day 일"
                 findViewById<TextView>(R.id.detailadress2).text = detailedDesc
 
+                // 모집 인원 TextView에 값 설정
+                findViewById<TextView>(R.id.detailNumPeople).text = "모집 인원: ${numPeople}명"
+
                 // 작성자 정보
                 if (authorId.isNotEmpty()) {
                     db.collection("users").document(authorId).get()

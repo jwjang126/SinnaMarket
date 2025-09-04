@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -26,6 +27,13 @@
 
         <!-- 작성자 정보 -->
         <TextView
+            android:id="@+id/detailNumPeople"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="4dp" />
+
+        <TextView
             android:id="@+id/detailAuthorInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +48,7 @@
             android:text="날짜"
             android:layout_marginTop="12dp"/>
 
-
+        <!-- 상품 설명 -->
         <TextView
             android:id="@+id/detailItemPrice"
             android:layout_width="wrap_content"
@@ -50,7 +58,6 @@
             android:layout_marginTop="4dp"/>
 
 
-        <!-- 상품 설명 -->
         <TextView
             android:id="@+id/detailItemDesc"
             android:layout_width="wrap_content"
