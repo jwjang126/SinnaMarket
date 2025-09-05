@@ -68,6 +68,14 @@ class ChatAdapter(
             holder.nickname.text = nickname
             holder.profileImage.setImageResource(R.drawable.ic_default_profile)
 
+            // 평점 (이미지 누르면 프로필 나타내기)
+            holder.profileImage.setOnClickListener{
+                val context = holder.itemView.context
+                if(context is ChatroomActivity){
+                    context.showRatingDialog(msg.senderId, nickname)
+                }
+            }
+
             // 캐시에 없으면 저장 (Firestore 호출 생략)
             if (!userCache.containsKey(msg.senderId)) {
                 userCache[msg.senderId] = nickname

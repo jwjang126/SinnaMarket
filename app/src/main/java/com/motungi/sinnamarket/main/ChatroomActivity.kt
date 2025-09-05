@@ -1,14 +1,19 @@
 package com.motungi.sinnamarket.main
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
+import android.widget.RatingBar
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.motungi.sinnamarket.R
+import com.motungi.sinnamarket.auth.RatingManager
 
 data class ChatMessage(
     val senderId: String = "",
@@ -86,5 +91,33 @@ class ChatroomActivity : AppCompatActivity() {
             .document(chatRoomId!!)
             .collection("messages")
             .add(messageData)
+    }
+
+    // 평점
+    fun showRatingDialog(ratedUid: String, nickname: String) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_rating,null)
+
+        val ratingBar = dialogView.findViewById<RatingBar>(R.id.rating_bar)
+        val reasonEditText = dialogView.findViewById<EditText>(R.id.reason_edit_text)
+        val nicknameTextView = dialogView.findViewById<TextView>(R.id.nickname_text_view)
+
+        nicknameTextView.text = "'${nickname}'님을 평가해주세요"
+
+        val builder = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("제출"){ dialog, _ ->
+                val score = ratingBar.rating
+                val reason = reasonEditText.text.toString()
+                val raterUid = currentUser?.uid
+
+                if(raterUid != null && score>0) {
+                    RatingManager.submitRatingToFirebase(ratedUid, raterUid, score, reason)
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소"){ dialog, _->
+                dialog.dismiss()
+            }
+        builder.show()
     }
 }
