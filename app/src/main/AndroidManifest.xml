@@ -29,11 +29,12 @@
             android:name=".main.ChatRoomAdapter"
             android:exported="false" />
         <activity
-            android:name=".main.ChatRoomListActivity"
+            android:name=".main.ChatroomActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
         <activity
-            android:name=".main.ChatroomActivity"
-            android:exported="false" /> <!-- Naver Map 클라이언트 ID 유지 -->
+            android:name=".main.ChatRoomListActivity"
+            android:exported="false" />
         <meta-data
             android:name="com.naver.maps.map.NCP_KEY_ID"
             android:value="ce3shefx6j" /> <!-- DetailActivity 유지 -->

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">  <!-- 중요: 화면 꽉 채우기 -->
 
     <LinearLayout
         android:orientation="vertical"
@@ -9,12 +10,14 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- 상품 이미지 -->
+        <!-- 상품 이미지: 가로 스크롤 -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/detailPhotoRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:orientation="horizontal"/>
+            android:layout_height="220dp"
+            android:scrollbars="horizontal"
+            android:overScrollMode="never"
+            android:nestedScrollingEnabled="false"/>  <!-- 안정화용 -->
 
         <!-- 상품 이름 -->
         <TextView
@@ -31,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"/>
 
         <TextView
             android:id="@+id/detailAuthorInfo"
@@ -39,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="작성자"
             android:layout_marginTop="4dp"
-            android:gravity="end" />
+            android:gravity="end"/>
 
         <TextView
             android:id="@+id/detaildate"
@@ -57,13 +60,12 @@
             android:textStyle="bold"
             android:layout_marginTop="4dp"/>
 
-
         <TextView
             android:id="@+id/detailItemDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"/>
 
         <!-- 거래 위치 -->
         <TextView
@@ -97,7 +99,7 @@
             android:id="@+id/map_view"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:layout_margin="5dp" />
+            android:layout_margin="5dp"/>
 
         <!-- 투표 옵션 -->
         <TextView
@@ -105,7 +107,6 @@
             android:layout_height="wrap_content"
             android:text="투표 가능 시간"
             android:layout_marginTop="12dp"/>
-
 
         <LinearLayout
             android:id="@+id/voteOptionsContainer"
