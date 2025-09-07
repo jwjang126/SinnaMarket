@@ -64,24 +64,33 @@ class ChatAdapter(
             holder.timestamp.text = timeStr
 
             // 캐시에 있으면 바로 사용
-            val nickname = userCache[msg.senderId] ?: msg.senderId.take(6)
-            holder.nickname.text = nickname
-            holder.profileImage.setImageResource(R.drawable.ic_default_profile)
+            val cachedNickname = userCache[msg.senderId]
+            if (cachedNickname != null) {
+                holder.nickname.text = cachedNickname
+            } else {
+                // Firestore에서 nickname 가져오기
+                val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                db.collection("users").document(msg.senderId).get()
+                    .addOnSuccessListener { doc ->
+                        val nickname = doc.getString("nickname") ?: "익명"
+                        holder.nickname.text = nickname
+                        userCache[msg.senderId] = nickname
+                    }
+                    .addOnFailureListener {
+                        holder.nickname.text = "익명"
+                    }
+            }
 
-            // 평점 (이미지 누르면 프로필 나타내기)
+            holder.profileImage.setImageResource(R.drawable.ic_default_profile)
             holder.profileImage.setOnClickListener{
                 val context = holder.itemView.context
                 if(context is ChatroomActivity){
-                    context.showRatingDialog(msg.senderId, nickname)
+                    val nicknameToShow = holder.nickname.text.toString()
+                    context.showRatingDialog(msg.senderId, nicknameToShow)
                 }
-            }
-
-            // 캐시에 없으면 저장 (Firestore 호출 생략)
-            if (!userCache.containsKey(msg.senderId)) {
-                userCache[msg.senderId] = nickname
             }
         }
     }
-
     override fun getItemCount(): Int = messages.size
 }
+

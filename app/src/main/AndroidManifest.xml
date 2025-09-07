@@ -5,8 +5,7 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false"
-        />
+        android:required="false" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -27,9 +26,14 @@
         android:theme="@style/Theme.SinnaMarket"
         tools:targetApi="31">
         <activity
-            android:name=".main.ChatroomActivity"
+            android:name=".main.ChatRoomAdapter"
             android:exported="false" />
-        <!-- Naver Map 클라이언트 ID 유지 -->
+        <activity
+            android:name=".main.ChatRoomListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".main.ChatroomActivity"
+            android:exported="false" /> <!-- Naver Map 클라이언트 ID 유지 -->
         <meta-data
             android:name="com.naver.maps.map.NCP_KEY_ID"
             android:value="ce3shefx6j" /> <!-- DetailActivity 유지 -->

@@ -83,7 +83,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_chat -> {
-                    Toast.makeText(this, "채팅방 목록 화면으로 이동", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ChatRoomListActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.nav_my_info -> {

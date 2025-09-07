@@ -18,8 +18,10 @@ import com.motungi.sinnamarket.auth.RatingManager
 data class ChatMessage(
     val senderId: String = "",
     val text: String = "",
-    val timestamp: Long = 0
+    val timestamp: Long = 0L,
+    var senderNickname: String = "" // 추가
 )
+
 
 class ChatroomActivity : AppCompatActivity() {
 
@@ -73,13 +75,26 @@ class ChatroomActivity : AppCompatActivity() {
                 for (doc in snapshot.documents) {
                     val text = doc.getString("text") ?: ""
                     val senderId = doc.getString("senderId") ?: ""
-                    val timestamp = doc.getLong("timestamp") ?: 0
-                    messages.add(ChatMessage(senderId, text, timestamp))
+                    val timestamp = doc.getLong("timestamp") ?: 0L
+
+                    val chatMessage = ChatMessage(senderId, text, timestamp)
+
+                    // 닉네임 가져오기
+                    if (senderId.isNotEmpty()) {
+                        db.collection("users").document(senderId).get()
+                            .addOnSuccessListener { userDoc ->
+                                chatMessage.senderNickname = userDoc.getString("nickname") ?: "Unknown"
+                                chatAdapter.notifyDataSetChanged()
+                            }
+                    }
+
+                    messages.add(chatMessage)
                 }
                 chatAdapter.notifyDataSetChanged()
                 chatRecyclerView.scrollToPosition(messages.size - 1)
             }
     }
+
 
     private fun sendMessage(msg: String) {
         val messageData = hashMapOf(
