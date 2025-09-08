@@ -111,20 +111,17 @@ class ChatroomActivity : AppCompatActivity() {
 
     // 평점
     fun showRatingDialog(ratedUid: String, nickname: String) {
-        // 평가하기 전에, 이 채팅방에서 이미 평가했는지 확인합니다.
         val raterUid = currentUser?.uid ?: return
         val ratingId = "${chatRoomId}_${raterUid}"
 
         db.collection("user-ratings").document(ratedUid)
             .collection("ratings").document(ratingId).get()
             .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    // 이미 평가 기록이 있으면 토스트 메시지 등을 보여주고 함수를 종료합니다.
+                if (document.exists()) { // 이미 평가한 경우
                     Toast.makeText(this, "이미 평가했습니다.", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
 
-                // 평가 기록이 없을 때만 다이얼로그를 띄웁니다.
                 val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_rating, null)
                 val ratingBar = dialogView.findViewById<RatingBar>(R.id.rating_bar)
                 val reasonEditText = dialogView.findViewById<EditText>(R.id.reason_edit_text)
@@ -139,7 +136,6 @@ class ChatroomActivity : AppCompatActivity() {
                         val reason = reasonEditText.text.toString()
 
                         if (score > 0) {
-                            // RatingManager 호출 시 chatRoomId를 넘겨줍니다.
                             RatingManager.submitRatingToFirebase(ratedUid, raterUid, score, reason, chatRoomId!!)
                         }
                         dialog.dismiss()
