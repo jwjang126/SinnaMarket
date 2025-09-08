@@ -114,7 +114,6 @@ class ChatroomActivity : AppCompatActivity() {
         val raterUid = currentUser?.uid ?: return
         val ratingId = "${chatRoomId}_${raterUid}"
 
-        // 사용자를 채팅방 당 한번만 평가 가능하도록
         db.collection("user-ratings").document(ratedUid)
             .collection("ratings").document(ratingId).get()
             .addOnSuccessListener { document ->
