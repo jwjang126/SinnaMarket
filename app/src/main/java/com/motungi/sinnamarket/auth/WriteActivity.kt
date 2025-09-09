@@ -48,7 +48,7 @@ class WriteActivity : AppCompatActivity() {
 
     private val ampm = arrayOf("선택하세요", "오전", "오후")
     private val hour = (1..12).map { "${it}시" }.toMutableList().apply { add(0, "선택하세요") }
-    private val min = (0..59).map { "${it}분" }.toMutableList().apply { add(0, "선택하세요") }
+    private val min = (0..55 step 5).map { "${it}분" }.toMutableList().apply { add(0, "선택하세요") }
     private val year = (2025..2030).map { "${it}년" }
     private val month = (1..12).map { "${it}월" }
     private val day = (1..31).map { "${it}일" }

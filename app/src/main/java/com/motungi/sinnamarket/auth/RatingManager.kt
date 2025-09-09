@@ -45,6 +45,9 @@ object RatingManager {
                 }
                 val averageRating = totalScore / documents.size()
 
+                // 소수점 둘째자리에서 반올림해서 첫째자리까지만 저장
+                val roundedRating = (Math.round(averageRating * 10) / 10.0)
+
                 // users 컬렉션의 최종 평점 업데이트
                 db.collection("users").document(ratedUid).update("rating", averageRating)
             }
