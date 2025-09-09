@@ -9,6 +9,8 @@ import com.motungi.sinnamarket.databinding.ItemPostBinding
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 import android.view.View
+import com.google.firebase.Timestamp
+
 
 data class PostWithDistance(
     val post: Post,
@@ -83,9 +85,11 @@ class PostAdapter(private var postsWithDistance: List<PostWithDistance>, private
             }
         }
 
-        private fun getTimeAgo(timestamp: Long): String {
+        private fun getTimeAgo(timestamp: Timestamp?): String {
+            if (timestamp == null) return "날짜 정보 없음"
+            val timeInMillis = timestamp.toDate().time  // Timestamp → Long(ms)
             val now = System.currentTimeMillis()
-            val diff = now - timestamp
+            val diff = now - timeInMillis
 
             val seconds = TimeUnit.MILLISECONDS.toSeconds(diff)
             val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
@@ -100,5 +104,6 @@ class PostAdapter(private var postsWithDistance: List<PostWithDistance>, private
                 else -> "오래 전"
             }
         }
+
     }
 }

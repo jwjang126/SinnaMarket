@@ -336,7 +336,7 @@ class WriteActivity : AppCompatActivity() {
             "location" to hashMapOf("lat" to lat, "lng" to lng, "desc" to selectedLocationDesc),
             "imageUrls" to imageUrls,
             "voteOptions" to voteOptions,
-            "uploadedAt" to System.currentTimeMillis(),
+            "uploadedAt" to com.google.firebase.Timestamp.now(),
             "state" to false,
             "date" to hashMapOf("year" to selectedYear, "month" to selectedMonth, "day" to selectedDay)
         )

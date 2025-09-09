@@ -33,7 +33,6 @@
             android:id="@+id/detailNumPeople"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:layout_marginTop="4dp"/>
 
         <TextView
@@ -45,10 +44,17 @@
             android:gravity="end"/>
 
         <TextView
+            android:id="@+id/detailwritedate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="작성일"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
             android:id="@+id/detaildate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="날짜"
+            android:text="거래 희망 날짜"
             android:layout_marginTop="12dp"/>
 
         <!-- 상품 설명 -->
