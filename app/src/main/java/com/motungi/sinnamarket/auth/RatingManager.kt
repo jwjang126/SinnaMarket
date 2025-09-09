@@ -49,7 +49,7 @@ object RatingManager {
                 val roundedRating = (Math.round(averageRating * 10) / 10.0)
 
                 // users 컬렉션의 최종 평점 업데이트
-                db.collection("users").document(ratedUid).update("rating", averageRating)
+                db.collection("users").document(ratedUid).update("rating", roundedRating)
             }
     }
 }
